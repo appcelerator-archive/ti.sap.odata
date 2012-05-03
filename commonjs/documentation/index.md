@@ -2,6 +2,12 @@
 
 Provides access to Microsoft's DataJS through Titanium. DataJS makes it easy to interact with OData.
 
+## Installation Instructions
+
+There is a "datajs-1.0.3.tijs" file in this module's directory. This must be placed in the Resources directory of your
+app, or the world of men will fall, and all will come to darkness, my module to ruin. Do you want that? No. So put it in
+the resources directory.
+
 ## Methods
 
 ### [Ti.DataJS.API][] init(window, readyCallback)

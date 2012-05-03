@@ -6,3 +6,4 @@ tmp
 build.log
 commonjs/drillbit/tests/*/tiapp.xml
 *.zip
+commonjs/module*
