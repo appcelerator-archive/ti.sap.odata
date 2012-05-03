@@ -4205,11 +4205,11 @@
                 }
             }
             return value;
-        }).d;
+        });
 
         json = jsonUpdateDataFromVersion(json, context.dataServiceVersion);
         json = jsonNormalizeData(json, context.response.requestUri);
-
+        
         return json;
     };
 

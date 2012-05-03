@@ -3,17 +3,23 @@ var win = Ti.UI.createWindow({
 });
 win.open();
 
+var baseURL = 'http://appc.me/odata/flocker/';
+
 var DataJS = require('ti.datajs');
 var OData = DataJS.init(win, requestList);
 
+var useXMLNotJSON = true;
+var dataType = useXMLNotJSON ? 'application/atom+xml' : 'application/json';
+
 function requestList() {
     OData.read({
-            requestUri: 'http://appc.me/odata/flocker',
-            accept: 'application/atom+xml'
+            requestUri: baseURL,
+            accept: dataType
         },
-        function (data, response) {
+        function (data) {
             Ti.API.info('requestList succeeded.');
-            requestDetails(data.results[0].__metadata.uri);
+            // XML gives us additional metadata. JSON just gives us the results. But URI computation is easy...
+            requestDetails(useXMLNotJSON ? data.results[0].__metadata.uri : (baseURL + data.results[0].Id));
         },
         function (err) {
             Ti.API.error('Error occurred ' + JSON.stringify(err));
@@ -24,11 +30,12 @@ function requestList() {
 function requestDetails(uri) {
     OData.read({
             requestUri: uri,
-            accept: 'application/atom+xml'
+            accept: dataType
         },
-        function (item, response) {
+        function (item) {
             Ti.API.info('requestDetails succeeded.');
-            updateItem(item.results[0]);
+            // XML has to wrap the feed in results. JSON gives us the item we requested directly.
+            updateItem(useXMLNotJSON ? item.results[0] : item);
         },
         function (err) {
             Ti.API.error('Error occurred ' + JSON.stringify(err));
@@ -37,24 +44,23 @@ function requestDetails(uri) {
 }
 
 function updateItem(item) {
-    var uri = (item.__metadata.edit || item.__metadata.uri) + '/PutXML';
-    Ti.API.info('Current message: ' + item.message);
-    item.message = 'Message at time: ' + new Date().getTime() + 'ms';
-    Ti.API.info('Changing to: ' + item.message);
+    // Again, XML gives us additional metadata. But we can compute the necessary URI.
+    var uri = useXMLNotJSON ? ((item.__metadata.edit || item.__metadata.uri) + '/PutXML') : (baseURL + item.Id);
 
-    Ti.API.info('uri: ' + uri);
+    // XML crunches everything to lowercase; JSON uses exactly what the server sends and receives.
+    item[useXMLNotJSON ? 'message' : 'Message'] = 'Message at time: ' + new Date().getTime() + 'ms';
 
     OData.request({
             headers: {
-                'Content-Type': 'application/atom+xml'
+                'Content-Type': dataType
             },
-            accept: 'application/atom+xml',
+            accept: dataType,
             requestUri: uri,
             method: 'PUT',
             data: item
         },
-        function (data, response) {
-            Ti.API.info('Update succeeded.');
+        function (data) {
+            alert('Update succeeded! Check the console for additional information.');
             Ti.API.info(JSON.stringify(data));
         },
         function (err) {

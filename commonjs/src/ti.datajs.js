@@ -135,7 +135,10 @@ exports.init = function (win, ready) {
         });
         xhr.open(request.method || "GET", url);
         xhr.setRequestHeader("accept", request.accept || "application/json,application/xml,text/html");
-        // TODO: are there other headers we need to set?
+        for (var h in request.headers) {
+            if (request.headers.hasOwnProperty(h) && h != 'Accept')
+            xhr.setRequestHeader(h, request.headers[h]);
+        }
         if (request.user) {
             xhr.setRequestHeader("Authorization", "Basic "
                 + Ti.Utils.base64encode(request.user + ":" + request.password));
