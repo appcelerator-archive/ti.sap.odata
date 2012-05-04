@@ -1,15 +1,50 @@
 exports.init = function (win, ready) {
     var api = {
         read: function (urlOrRequest, success, error, handler, httpClient, metadata) {
-            enqueue('read', urlOrRequest, success, error, handler, httpClient, metadata);
+            if (!tryHandlingJSON(urlOrRequest, success, error))
+                enqueue('read', urlOrRequest, success, error, handler, httpClient, metadata);
         },
         request: function (request, success, error, handler, httpClient, metadata) {
-            enqueue('request', request, success, error, handler, httpClient, metadata);
+            if (!tryHandlingJSON(request, success, error))
+                enqueue('request', request, success, error, handler, httpClient, metadata);
         }
     };
 
     var lastCallID = 0;
     var queuedFunctions = {};
+
+    function tryHandlingJSON(request, success, error) {
+        if (typeof request != 'object' || !request.accept || request.accept != 'application/json')
+            return false;
+        request.body = request.data && JSON.stringify(request.data);
+        handleRequest(request.requestUri, request, function (type, response) {
+            var data = false;
+            if (response) {
+                if (response.body) {
+                    var json = response.body;
+                    delete response.body;
+                    try {
+                        json = trim12(json);
+                        if (json && json.length > 0) {
+                            json = JSON.parse(json);
+                        }
+                        data = json.length != undefined && typeof json != 'string'
+                            ? { results: json }
+                            : json;
+                    } catch (err) {
+                        error(err);
+                        return true;
+                    }
+                }
+            }
+            if (type == 'success') {
+                success(data, response);
+            } else {
+                error(response);
+            }
+        });
+        return true;
+    }
 
     function enqueue(name, urlOrRequest, success, error, handler, httpClient, metadata) {
         lastCallID += 1;
@@ -81,6 +116,16 @@ exports.init = function (win, ready) {
 
     Ti.App.addEventListener('datajs-ti-handleRequest', function (evt) {
         var url = evt.url, id = evt.id, request = JSON.parse(evt.request);
+        handleRequest(url, request, function callback(type, response) {
+            Ti.App.fireEvent("datajs-js-dequeueFunction", {
+                name: type,
+                id: id,
+                arg: JSON.stringify(response)
+            });
+        });
+    });
+
+    function handleRequest(url, request, callback) {
         var xhr = Ti.Network.createHTTPClient({
             onload: function () {
                 var headers;
@@ -110,34 +155,22 @@ exports.init = function (win, ready) {
                 };
                 url = null;
                 if (this.status >= 200 && this.status <= 299) {
-                    Ti.App.fireEvent("datajs-js-dequeueFunction", {
-                        name: 'success',
-                        id: id,
-                        arg: JSON.stringify(response)
-                    });
+                    callback('success', response);
                 } else {
-                    Ti.App.fireEvent("datajs-js-dequeueFunction", {
-                        name: 'error',
-                        id: id,
-                        arg: JSON.stringify({ message: "HTTP request failed", request: request, response: this.responseText })
-                    });
+                    callback('error', { message: "HTTP Request Failed", request: request, response: this.responseText });
                 }
-                request = id = null;
+                request = null;
             },
             onerror: function () {
-                Ti.App.fireEvent("datajs-js-dequeueFunction", {
-                    name: 'error',
-                    id: id,
-                    arg: JSON.stringify({ message: "HTTP request failed", request: request, response: this.responseText })
-                });
-                request = id = null;
+                callback('error', { message: "HTTP Request Failed", request: request, response: this.responseText });
+                request = null;
             }
         });
         xhr.open(request.method || "GET", url);
         xhr.setRequestHeader("accept", request.accept || "application/json,application/xml,text/html");
         for (var h in request.headers) {
             if (request.headers.hasOwnProperty(h) && h != 'Accept')
-            xhr.setRequestHeader(h, request.headers[h]);
+                xhr.setRequestHeader(h, request.headers[h]);
         }
         if (request.user) {
             xhr.setRequestHeader("Authorization", "Basic "
@@ -150,7 +183,7 @@ exports.init = function (win, ready) {
         }
         xhr.send(request.body || {});
         xhr = null;
-    });
+    }
 
     return api;
 };
