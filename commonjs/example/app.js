@@ -1,3 +1,5 @@
+var DataJS = require('ti.datajs');
+
 var win = Ti.UI.createWindow({
     backgroundColor: '#fff'
 });
@@ -6,14 +8,10 @@ var status = Ti.UI.createLabel({
     color: '#000'
 });
 win.add(status);
-win.open();
 
 var baseURL = 'http://appc.me/odata/flocker/';
 
-var DataJS = require('ti.datajs');
-var OData = DataJS.init(win, start);
-
-var useXMLNotJSON = false;
+var useXMLNotJSON = true;
 var dataType = useXMLNotJSON ? 'application/atom+xml' : 'application/json';
 
 var maxIterations = 50;
@@ -47,9 +45,9 @@ function check() {
 
 function requestList() {
     status.text = iterationsRemaining + ' of ' + maxIterations;
-    OData.read({
+    DataJS.read({
             requestUri: baseURL,
-            accept: dataType
+            headers: { Accept: dataType }
         },
         function (data, response) {
             Ti.API.info('requestList succeeded.');
@@ -65,9 +63,9 @@ function requestList() {
 }
 
 function requestDetails(uri) {
-    OData.read({
+    DataJS.read({
             requestUri: uri,
-            accept: dataType
+            headers: { Accept: dataType }
         },
         function (item, response) {
             Ti.API.info('requestDetails succeeded.');
@@ -90,12 +88,12 @@ function updateItem(item) {
     // XML crunches everything to lowercase; JSON uses exactly what the server sends and receives.
     item[useXMLNotJSON ? 'message' : 'Message'] = 'Message at time: ' + new Date().getTime() + 'ms';
 
-    OData.request({
-            headers: {
-                'Content-Type': dataType
-            },
-            accept: dataType,
+    DataJS.request({
             requestUri: uri,
+            headers: {
+                'Content-Type': dataType,
+                Accept: dataType
+            },
             method: 'PUT',
             data: item
         },
@@ -115,3 +113,6 @@ function updateItem(item) {
         }
     );
 }
+
+win.addEventListener('open', start);
+win.open();

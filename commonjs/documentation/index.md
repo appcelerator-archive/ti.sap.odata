@@ -1,17 +1,22 @@
 # Ti.DataJS Module
 
-Provides access to Microsoft's DataJS through Titanium. DataJS makes it easy to interact with OData.
+Provides access to Microsoft's DataJS through Titanium. DataJS makes it easy to interact with OData through XML or JSON.
 
 ## Installation Instructions
 
-There is a "datajs-1.0.3.tijs" file in this module's directory. This must be placed in the Resources directory of your
+There is a "microsoft.datajs.js" file in this module's directory. This must be placed in the Resources directory of your
 app, or the world of men will fall, and all will come to darkness, my module to ruin. Do you want that? No. So put it in
-the resources directory.
+the Resources directory.
 
 ## Methods
 
-### [Ti.DataJS.API][] init(window, readyCallback)
-Initializes the DataJS library, hooking it up to the current window, and calling the readyCallback when it is ready to be used.
+### void read(urlOrRequest, success, error, handler, httpClient, metadata)
+Please see Microsoft's DataJS documentation on CodePlex to learn more.
+The first three arguments are required. The last three are optional.
+
+### void request(request, success, error, handler, httpClient, metadata)
+Please see Microsoft's DataJS documentation on CodePlex to learn more.
+The first three arguments are required. The last three are optional.
 
 ## Author
 
@@ -28,5 +33,3 @@ Please direct all questions, feedback, and concerns to [info@appcelerator.com](m
 ## License
 
 Copyright(c) 2011-2012 by Appcelerator, Inc. All Rights Reserved. Please see the LICENSE file included in the distribution for further details.
-
-[Ti.DataJS.API]: api.html

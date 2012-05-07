@@ -1,16 +1,22 @@
-﻿// Copyright (c) Microsoft.  All rights reserved.
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal  in the Software without restriction, including without limitation the rights  to use, copy,
-// modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-// WARRANTIES OF MERCHANTABILITY,  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+/*
+ * @license
+ *
+ * Titanium Change 1 of 7: Change to block comment with @license attribute to preserve statement.
+ * This is version 1.0.3 of DataJS.
+ *
+ * Copyright (c) Microsoft.  All rights reserved.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal  in the Software without restriction, including without limitation the rights  to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions: 
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY,  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
 // datajs.js
 
 (function (window, undefined) {
@@ -916,6 +922,10 @@
         /// <summary>Checks whether the specified URL is local to the current context.</summary>
         /// <param name="url" type="String">URL to check.</param>
         /// <returns type="Boolean">true if the url is a local URL; false otherwise.</returns>
+        // Titanium Change 2 of 7: Titanium Mobile can hit any URL like it is local.
+        if (Ti && Ti.Platform.osname != 'mobileweb') {
+            return true;
+        }
 
         if (!isAbsoluteUrl(url)) {
             return true;
@@ -1641,7 +1651,11 @@
         var doc = domNode.ownerDocument;
         var attribute;
         if (doc.createAttributeNS) {
-            attribute = doc.createAttributeNS(xmlnsNS, name);
+            // Titanium Change 3 of 7: Use createAttribute when namespace is null.
+            if (xmlnsNS)
+                attribute = doc.createAttributeNS(xmlnsNS, name);
+            else
+                attribute = doc.createAttribute(name);
         } else {
             attribute = doc.createNode(2, name, xmlnsNS);
         }
@@ -1821,7 +1835,11 @@
         var attribute;
         localName = (nsPrefix) ? (nsPrefix + ":" + localName) : localName;
         if (doc.createAttributeNS) {
-            attribute = doc.createAttributeNS(nsURI, localName);
+            // Titanium Change 4 of 7: Use createAttribute when namespace is null.
+            if (nsURI)
+                attribute = doc.createAttributeNS(nsURI, localName);
+            else
+                attribute = doc.createAttribute(localName);
             domNode.setAttributeNodeNS(attribute);
         } else {
             attribute = doc.createNode(2, localName, nsURI || undefined);
@@ -1889,7 +1907,11 @@
 
         var attribute;
         if (dom.createAttributeNS) {
-            attribute = dom.createAttributeNS(nsURI, name);
+            // Titanium Change 5 of 7: Use createAttribute when namespace is null.
+            if (nsURI)
+                attribute = dom.createAttributeNS(nsURI, name);
+            else
+                attribute = dom.createAttribute(name);
             attribute.value = value;
             element.domNode.setAttributeNodeNS(attribute);
         } else {
@@ -1981,8 +2003,13 @@
         /// <param name="nsURI" type="String">Namespace of the attribute to get.</param>
         /// <returns type="String">Value of the attribute if found; null otherwise.</returns>
 
-        if (domNode.getAttributeNS) {
-            return domNode.getAttributeNS(nsURI || null, localName);
+        // Titanium Change 6 of 7: Use getAttribute when namespace is null.
+        if (domNode.getAttributeNS && nsURI) {
+            return domNode.getAttributeNS(nsURI, localName);
+        }
+        
+        if (domNode.getAttribute && !nsURI) {
+            return domNode.getAttribute(localName);
         }
 
         // The method is not supported so we work with the attributes collection. 
@@ -4206,10 +4233,14 @@
             }
             return value;
         });
+        // Titanium Change 7 of 7: Only reduce JSON to property "d" when it is present.
+        if (json.d) {
+            json = json.d;
+        }
 
         json = jsonUpdateDataFromVersion(json, context.dataServiceVersion);
         json = jsonNormalizeData(json, context.response.requestUri);
-        
+
         return json;
     };
 
