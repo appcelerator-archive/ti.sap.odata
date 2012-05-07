@@ -1,4 +1,4 @@
-/*
+/**
  * @license
  *
  * Titanium Change 1 of 7: Change to block comment with @license attribute to preserve statement.
