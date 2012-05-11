@@ -71,7 +71,7 @@ function DataJSWrapper(exports) {
                 }
             });
             
-			// Optional format query string
+            // Optional format query string
             if (request.formatQueryString) {
                 var queryString = encodeURI(request.formatQueryString);
                 var qIndex = url.indexOf("?");
