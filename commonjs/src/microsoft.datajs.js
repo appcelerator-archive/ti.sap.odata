@@ -1802,9 +1802,9 @@
         }
 
         // Titanium Change 4 of 8: Use 'name' property if 'baseName' is not implemented.
-		if (node.baseName) {
-			return node.baseName;
-		}
+        if (node.baseName) {
+            return node.baseName;
+        }
 		
 		return node.name;
     };

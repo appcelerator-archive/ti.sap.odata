@@ -72,17 +72,17 @@ function DataJSWrapper(exports) {
             });
             
 			// Optional format query string
-			if (request.formatQueryString) {
-				var queryString = encodeURI(request.formatQueryString);
-	            var qIndex = url.indexOf("?");
-	            if (qIndex === -1) {
-	                url = url + "?" + queryString;
-	            } else if (qIndex === url.length - 1) {
-	                url = url + queryString;
-	            } else {
-	                url = url + "&" + queryString;
-	            }
-	        }	            
+            if (request.formatQueryString) {
+                var queryString = encodeURI(request.formatQueryString);
+                var qIndex = url.indexOf("?");
+                if (qIndex === -1) {
+                    url = url + "?" + queryString;
+                } else if (qIndex === url.length - 1) {
+                    url = url + queryString;
+                } else {
+                    url = url + "&" + queryString;
+                }
+            }
           
             xhr.open(request.method || 'GET', url);
             for (var h in request.headers) {
