@@ -29,7 +29,6 @@ function DataJSWrapper(exports) {
             };
         };
         this.xhrOverride = function (url, request, success, error) {
-            Ti.API.info('request.body: ' + (request.body || ''));
             var xhr = Ti.Network.createHTTPClient({
                 onload: function () {
                     var headers;
@@ -71,6 +70,20 @@ function DataJSWrapper(exports) {
                     request = xhr = success = error = null;
                 }
             });
+            
+			// Optional format query string
+			if (request.formatQueryString) {
+				var queryString = encodeURI(request.formatQueryString);
+	            var qIndex = url.indexOf("?");
+	            if (qIndex === -1) {
+	                url = url + "?" + queryString;
+	            } else if (qIndex === url.length - 1) {
+	                url = url + queryString;
+	            } else {
+	                url = url + "&" + queryString;
+	            }
+	        }	            
+          
             xhr.open(request.method || 'GET', url);
             for (var h in request.headers) {
                 if (request.headers.hasOwnProperty(h))
