@@ -1,7 +1,7 @@
 /**
  * @license
  *
- * Titanium Change 1 of 7: Change to block comment with @license attribute to preserve statement.
+ * Titanium Change 1 of 8: Change to block comment with @license attribute to preserve statement.
  * This is version 1.0.3 of DataJS.
  *
  * Copyright (c) Microsoft.  All rights reserved.
@@ -922,7 +922,7 @@
         /// <summary>Checks whether the specified URL is local to the current context.</summary>
         /// <param name="url" type="String">URL to check.</param>
         /// <returns type="Boolean">true if the url is a local URL; false otherwise.</returns>
-        // Titanium Change 2 of 7: Titanium Mobile can hit any URL like it is local.
+        // Titanium Change 2 of 8: Titanium Mobile can hit any URL like it is local.
         if (Ti && Ti.Platform.osname != 'mobileweb') {
             return true;
         }
@@ -1651,7 +1651,7 @@
         var doc = domNode.ownerDocument;
         var attribute;
         if (doc.createAttributeNS) {
-            // Titanium Change 3 of 7: Use createAttribute when namespace is null.
+            // Titanium Change 3 of 8: Use createAttribute when namespace is null.
             if (xmlnsNS)
                 attribute = doc.createAttributeNS(xmlnsNS, name);
             else
@@ -1801,7 +1801,12 @@
             return node.localName;
         }
 
-        return node.baseName;
+        // Titanium Change 4 of 8: Use 'name' property if 'baseName' is not implemented.
+        if (node.baseName) {
+            return node.baseName;
+        }
+		
+		return node.name;
     };
 
     var xmlNewDocument = function (name, nsURI) {
@@ -1835,7 +1840,7 @@
         var attribute;
         localName = (nsPrefix) ? (nsPrefix + ":" + localName) : localName;
         if (doc.createAttributeNS) {
-            // Titanium Change 4 of 7: Use createAttribute when namespace is null.
+            // Titanium Change 5 of 8: Use createAttribute when namespace is null.
             if (nsURI)
                 attribute = doc.createAttributeNS(nsURI, localName);
             else
@@ -1907,7 +1912,7 @@
 
         var attribute;
         if (dom.createAttributeNS) {
-            // Titanium Change 5 of 7: Use createAttribute when namespace is null.
+            // Titanium Change 6 of 8: Use createAttribute when namespace is null.
             if (nsURI)
                 attribute = dom.createAttributeNS(nsURI, name);
             else
@@ -2003,7 +2008,7 @@
         /// <param name="nsURI" type="String">Namespace of the attribute to get.</param>
         /// <returns type="String">Value of the attribute if found; null otherwise.</returns>
 
-        // Titanium Change 6 of 7: Use getAttribute when namespace is null.
+        // Titanium Change 7 of 8: Use getAttribute when namespace is null.
         if (domNode.getAttributeNS && nsURI) {
             return domNode.getAttributeNS(nsURI, localName);
         }
@@ -4233,7 +4238,7 @@
             }
             return value;
         });
-        // Titanium Change 7 of 7: Only reduce JSON to property "d" when it is present.
+        // Titanium Change 8 of 8: Only reduce JSON to property "d" when it is present.
         if (json.d) {
             json = json.d;
         }
