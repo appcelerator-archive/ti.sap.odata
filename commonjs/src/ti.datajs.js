@@ -1185,8 +1185,7 @@ function DataJSWrapper(exports) {
                         }
                     };
 
-                    alert(request.method);
-                    xhr.open(request.method || "GET", url, false, request.user, request.password);
+                    xhr.open(request.method || "GET", url, true, request.user, request.password);
                     // Titanium Change 9 of 9: Titanium Mobile Web requires withCredentials to be set
                     // Still issues with CORS and 405 errors
                     xhr.withCredentials = true;
