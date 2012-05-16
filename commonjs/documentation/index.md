@@ -5,9 +5,13 @@
 Provides access to OData feeds by utilizing Microsoft's DataJS JavaScript library through Titanium.
 DataJS makes it easy to interact with OData through XML or JSON.
 
-## oData Resources
+## Note:
 
-Visit the [SAP NetWeaver Gateway][sapnetweavergateway] website for details on the SAP oData technology. There are a number
+This module requires that you are using version 2.0.2 or newer of the Titanium SDK.
+
+## OData Resources
+
+Visit the [SAP NetWeaver Gateway][sapnetweavergateway] website for details on the SAP OData technology. There are a number
 of informative documents that may be helpful in getting started with accessing SAP technologies.
 
 ## Getting Started
@@ -26,7 +30,7 @@ The DataJS variable is a reference to the Module object.
 ## Methods
 
 ### void read(urlOrRequest, success, error, handler, httpClient, metadata)
-Reads data from the specified oData end point. Please see the [DataJS documentation for OData.read][datajsread] to learn more.
+Reads data from the specified OData end point. Please see the [DataJS documentation for OData.read][datajsread] to learn more.
 The first three arguments are required. The last three are optional.
 
 * urlOrRequest[string or object]: A string containing the URL to which the request is sent, or an object that represents the HTTP request to be sent
@@ -52,7 +56,7 @@ The first three arguments are required. The last three are optional.
         }
 
 ### void request(request, success, error, handler, httpClient, metadata)
-Sends a request containing oData payload to the server. Please see the [DataJS documentation for OData.request][datajsrequest] to learn more.
+Sends a request containing OData payload to the server. Please see the [DataJS documentation for OData.request][datajsrequest] to learn more.
 The first three arguments are required. The last three are optional.
 
 * request[object]: An object that represents the HTTP request to be sent
