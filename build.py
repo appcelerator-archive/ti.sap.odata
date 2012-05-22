@@ -40,16 +40,18 @@ def create_ant_module(platform):
 
 def clean_build_module(platform):
     build_path = os.path.join(os.getcwd(), platform, 'build')
-    shutil.rmtree(build_path)
+    if os.path.exists(build_path):
+        shutil.rmtree(build_path)
     print "Cleaned %s module project" % platform
 
 def clean_ant_module(platform):
     ant_path = os.path.join(os.getcwd(), platform)
     retcode = fork_ant(ant_path, 'ant clean', False)
+    retcode = fork_ant(ant_path, 'ant cleancopy', False)
     print "Cleaned %s module project" % platform
 
 def main(args):
-    print "Appcelerator Titanium Module Packager"
+    print "Appcelerator Titanium Module Builder"
     print
 
     if len(args) < 2:

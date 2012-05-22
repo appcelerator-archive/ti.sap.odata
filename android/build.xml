@@ -29,7 +29,7 @@
     <!-- Copy license -->
     <copy todir="${basedir}" file="${basedir}/../LICENSE"/>
 
-    <target name="clean" description="Delete old copies">
+    <target name="cleancopy" description="Delete old copies">
       <delete dir="${basedir}/documentation"/>
       <delete dir="${basedir}/example"/>
       <delete dir="${basedir}/assets"/>
