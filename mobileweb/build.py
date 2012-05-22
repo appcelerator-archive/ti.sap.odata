@@ -54,7 +54,7 @@ class Compiler(object):
 		
 		self.deploytype = deploytype
 		self.module_path = os.path.abspath(os.path.dirname(sys._getframe(0).f_code.co_filename))
-		self.src_path = os.path.join(self.module_path, '..', 'commonjs', 'src')
+		self.src_path = os.path.join(self.module_path, '..', 'assets')
 		self.build_path = os.path.join(self.module_path, 'build')
 		
 		self.load_manifest()
@@ -126,7 +126,7 @@ class Compiler(object):
 					print '[WARN] Please update the manifest key: "%s" to a non-default value' % key
 	
 	def check_license(self):
-		c = open(os.path.join(self.module_path, '..', 'commonjs', 'LICENSE')).read()
+		c = open(os.path.join(self.module_path, '..', 'LICENSE')).read()
 		if c.find(module_license_default) != -1:
 			print '[WARN] Please update the LICENSE file with your license text before distributing'
 	
@@ -376,7 +376,7 @@ class Compiler(object):
 		), shell=True)
 	
 	def generate_doc(self):
-		docdir = os.path.join(self.module_path, '..', 'commonjs', 'documentation')
+		docdir = os.path.join(self.module_path, '..', 'documentation')
 		if not os.path.exists(docdir):
 			print '[WARN] Couldn\'t find documentation file at: %s' % docdir
 			return None
@@ -416,7 +416,7 @@ class Compiler(object):
 		
 		zf = zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED)
 		zf.write(os.path.join(self.module_path, 'manifest'), '%s/manifest' % install_path)
-		zf.write(os.path.join(self.module_path, '../commonjs/LICENSE'), '%s/LICENSE' % install_path)
+		zf.write(os.path.join(self.module_path, '../LICENSE'), '%s/LICENSE' % install_path)
 		
 		zf.writestr('%s/package.json' % install_path, simplejson.dumps({
 			'name': self.manifest['name'],
@@ -429,7 +429,7 @@ class Compiler(object):
 		}, indent=4, sort_keys=True))
 		
 		self.zip_dir(zf, 'build', '%s/src' % install_path)
-		self.zip_dir(zf, '../commonjs/example', '%s/example' % install_path)
+		self.zip_dir(zf, '../example', '%s/example' % install_path)
 		
 		docs = self.generate_doc()
 		if docs != None:
