@@ -3,6 +3,7 @@
 # during compilation, packaging, distribution, etc.
 #
 version: 1.0.0
+apiversion: 2
 description: DataJS for Titanium
 author: Dawson Toth and Jeff English
 license: Appcelerator Commercial License
@@ -13,5 +14,6 @@ copyright: Copyright (c) 2011-2012 by Appcelerator,  Inc.
 name: datajs
 moduleid: ti.datajs
 guid: 1056b5d2-2bb5-4339-b930-297637aeec30
-platform: iphone
+platform: android
 minsdk: 2.0.2
+commonjs: true
