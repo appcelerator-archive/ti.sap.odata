@@ -1,19 +1,8 @@
 #!/usr/bin/python
 import os, sys
-import shutil, platform, subprocess
+import shutil, glob, platform, subprocess
 
-def fork(args, quiet=False):
-    # We need to insert the python executable to be safe
-    #args.insert(0, sys.executable)
-    proc = subprocess.Popen(args, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
-    while proc.poll() == None:
-        line = proc.stdout.readline()
-        if line and not quiet:
-            print line.strip()
-            sys.stdout.flush()
-    return proc.returncode
-
-def fork_ant(directory, cmd, quiet=False):
+def fork(directory, cmd, quiet=False):
     proc = subprocess.Popen(cmd, shell=True, cwd=directory, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
     while proc.poll() == None:
         line = proc.stdout.readline()
@@ -22,17 +11,9 @@ def fork_ant(directory, cmd, quiet=False):
             sys.stdout.flush()
     return proc.returncode
 
-def create_build_module(platform):
-    build_path = os.path.join(os.getcwd(), platform, 'build.py')
-    retcode = fork([build_path], False)
-    if retcode == 0:
-        print "Created %s module project" % platform
-    else:
-        die("Aborting")
-
-def create_ant_module(platform):
-    ant_path = os.path.join(os.getcwd(), platform)
-    retcode = fork_ant(ant_path, 'ant', False)
+def create_module(platform, cmd):
+    build_path = os.path.join(os.getcwd(), platform)
+    retcode = fork(build_path, cmd, False)
     if retcode == 0:
         print "Created %s module project" % platform
     else:
@@ -42,12 +23,18 @@ def clean_build_module(platform):
     build_path = os.path.join(os.getcwd(), platform, 'build')
     if os.path.exists(build_path):
         shutil.rmtree(build_path)
+    zip_file = os.path.join(os.getcwd(), platform, '*.zip')
+    for fl in glob.glob(zip_file):
+        os.remove(fl)
     print "Cleaned %s module project" % platform
 
 def clean_ant_module(platform):
     ant_path = os.path.join(os.getcwd(), platform)
-    retcode = fork_ant(ant_path, 'ant clean', False)
-    retcode = fork_ant(ant_path, 'ant cleancopy', False)
+    retcode = fork(ant_path, 'ant clean', False)
+    retcode = fork(ant_path, 'ant cleancopy', False)
+    zip_file = os.path.join(os.getcwd(), platform, 'dist', '*.zip')
+    for fl in glob.glob(zip_file):
+        os.remove(fl)
     print "Cleaned %s module project" % platform
 
 def main(args):
@@ -63,16 +50,16 @@ def main(args):
 
     if cmd == 'build':
         if os.path.exists('iphone'):
-            create_build_module('iphone')
+            create_module('iphone', './build.py')
 
         if os.path.exists('mobileweb'):
-            create_build_module('mobileweb')
+            create_module('mobileweb', './build.py')
 
         if os.path.exists('android'):
-            create_ant_module('android')
+            create_module('android', 'ant')
 
         if os.path.exists('commonjs'):
-            create_build_module('commonjs')
+            create_module('commonjs', './build.py')
     elif cmd == 'clean':
         if os.path.exists('iphone'):
             clean_build_module('iphone')

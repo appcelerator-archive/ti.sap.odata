@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 import os, sys, glob, zipfile, re, uuid, types
 
-# OUTPUT FILENAME MUST BE <modulename>-*-* TO BE AUTO-UNZIPPED
+# OUTPUT FILENAME MUST BE <modulename>-*-* TO BE AUTO-UNZIPPED BY TITANIUM
 
 def die(msg):
     print
     print "!!!!!!! ERROR !!!!!!!"
     print msg
     print "!!!!!!! ERROR !!!!!!!"
+    if os.path.exists('temp.zip'):
+        os.remove('temp.zip')
     sys.exit(1)
 
 def parse_manifest(contents):
@@ -56,7 +58,7 @@ def package_modules(args):
         zin.close()
     zout.close()
 
-    tgtfilename = args['modname'] + "-javascript-" + args['version'] + ".zip";
+    tgtfilename = args['modname'] + "-common-" + args['version'] + ".zip";
     tgtfile = os.path.join(os.getcwd(), tgtfilename)
     if os.path.exists(tgtfile):
         os.remove(tgtfile)
