@@ -7,6 +7,7 @@
  */
 
 var apiSet;
+var exports = exports || {};
 
 if (Ti.Platform.osname == 'mobileweb') {
 	apiSet = this;
