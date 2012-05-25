@@ -48,7 +48,7 @@ def read_ti_xcconfig():
 	return config
 
 def generate_doc(config):
-	docdir = os.path.join(cwd,'..','commonjs','documentation')
+	docdir = os.path.join(cwd,'..','documentation')
 	if not os.path.exists(docdir):
 		print "Couldn't find documentation file at: %s" % docdir
 		return None
@@ -67,7 +67,7 @@ def generate_doc(config):
 	return documentation
 
 def compile_js(manifest,config):
-	js_file = os.path.join(cwd,'..','commonjs','src','ti.datajs.js')
+	js_file = os.path.join(cwd,'..','assets','ti.datajs.js')
 	print js_file
 	if not os.path.exists(js_file): return	
 
@@ -113,7 +113,7 @@ def warn(msg):
 	print "[WARN] %s" % msg	
 
 def validate_license():
-	c = open(os.path.join(cwd,'..','commonjs','LICENSE')).read()
+	c = open(os.path.join(cwd,'..','LICENSE')).read()
 	if c.find(module_license_default)!=-1:
 		warn('please update the LICENSE file with your license text before distributing')
 			
@@ -194,8 +194,8 @@ def package_module(manifest,mf,config):
 			for file, html in doc.iteritems():
 				filename = string.replace(file,'.md','.html')
 				zf.writestr('%s/documentation/%s'%(modulepath,filename),html)
-	zip_dir(zf,'../commonjs/example','%s/%s' % (modulepath,'example'),['README'])
-	zf.write('../commonjs/LICENSE','%s/LICENSE' % modulepath)
+	zip_dir(zf,'../example','%s/%s' % (modulepath,'example'),['README'])
+	zf.write('../LICENSE','%s/LICENSE' % modulepath)
 	zf.write('module.xcconfig','%s/module.xcconfig' % modulepath)
 	exports_file = 'metadata.json'
 	if os.path.exists(exports_file):
