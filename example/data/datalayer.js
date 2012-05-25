@@ -44,7 +44,7 @@
 		headers: { Accept: dataType },
 		formatQueryString: queryString,
 		user: credentials.user,
-		password: credentials.password,
+		password: credentials.password
 	});
 
     // Public method for clearing the data cache
