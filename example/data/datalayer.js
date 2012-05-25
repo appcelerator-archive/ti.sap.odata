@@ -37,7 +37,7 @@
     // background work for retrieving each page of data. This is an optional feature of
     // the dataJS module and is not required for oData usage, but is very helpful for
     // implementing 'infinite-scrolling' in the user-interface.
-	var flightCollectionCache = DataJS.createDataCache({
+	var flightCollectionCache = DataJS.datajs.createDataCache({
 		name: 'flightCollectionCache',
 		source: flightCollectionURL,
 		pageSize: pageSize,
@@ -77,7 +77,7 @@
     //   success: callback function to be notified when data has been retrieved
     //   error: callback function to be notified if an error occurs during retrieval
 	datalayer.getFlightCollection = function (success, error) {
-	    DataJS.read({
+	    DataJS.OData.read({
     	        requestUri: flightCollectionURL,
         	    headers: { Accept: dataType },
 				formatQueryString: queryString,

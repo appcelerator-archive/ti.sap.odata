@@ -29,24 +29,25 @@ The DataJS variable is a reference to the Module object.
 
 ## Methods
 
-### void read(urlOrRequest, success, error, handler, httpClient, metadata)
-Reads data from the specified OData end point. Please see the [DataJS documentation for OData.read][datajsread] to learn more.
-The first three arguments are required. The last three are optional.
+### void OData.read(urlOrRequest, success, error, handler, httpClient, metadata)
+Reads data from the specified OData URL. Please see the [DataJS documentation for OData.read][datajsread] to learn more.
 
 * urlOrRequest[string or object]: A string containing the URL to which the request is sent, or an object that represents the HTTP request to be sent
-* success[function]: A callback function that is executed if the request succeeds. Parameters passed to the callback function are:
+* success[function]: A callback function that is executed if the request succeeds (optional). Parameters passed to the callback function are:
     * data[object]: Processed data
     * response[object]: Server response
-* error[function]: A callback function that is executed if the request fails. Parameters passed to the callback function are:
+* error[function]: A callback function that is executed if the request fails (optional). Parameters passed to the callback function are:
     * err[object]: Error object
 * handler[function]: Handler for data serialization (optional)
 * httpClient[object]: Object to use as an HTTP stack (optional)
 * metadata[object]: Object describing the structural metadata to use (optional)
 
 #### Example
-    DataJS.read({
+    DataJS.OData.read({
             requestUri: baseURL,
-            headers: { Accept: 'application/atom+xml' }
+            headers: {
+                Accept: 'application/atom+xml'
+            }
         },
         function (data, response) {
             Ti.API.info(JSON.stringify(data));
@@ -55,22 +56,21 @@ The first three arguments are required. The last three are optional.
             Ti.API.error('Error occurred ' + JSON.stringify(err));
         }
 
-### void request(request, success, error, handler, httpClient, metadata)
+### void OData.request(request, success, error, handler, httpClient, metadata)
 Sends a request containing OData payload to the server. Please see the [DataJS documentation for OData.request][datajsrequest] to learn more.
-The first three arguments are required. The last three are optional.
 
 * request[object]: An object that represents the HTTP request to be sent
-* success[function]: A callback function that is executed if the request succeeds. Parameters passed to the callback function are:
+* success[function]: A callback function that is executed if the request succeeds (optional). Parameters passed to the callback function are:
     * data[object]: Processed data
     * response[object]: Server response
-* error[function]: A callback function that is executed if the request fails. Parameters passed to the callback function are:
+* error[function]: A callback function that is executed if the request fails (optional). Parameters passed to the callback function are:
     * err[object]: Error object
 * handler[function]: Handler for data serialization (optional)
 * httpClient[object]: Object to use as an HTTP stack (optional)
 * metadata[object]: Object describing the structural metadata to use (optional)
 
 #### Example
-    DataJS.request({
+    DataJS.OData.request({
             requestUri: uri,
             headers: {
                 'Content-Type': 'application/atom+xml',
@@ -87,7 +87,7 @@ The first three arguments are required. The last three are optional.
         }
     );
 
-### object createDataCache(options)
+### object datajs.createDataCache(options)
 The datajs cache API provides a very simple way of reading large paginated results in an efficient way that is very responsive
 to the needs of the user interface. Please see the [DataJS documentation for the datajs cache API][datajsdatacache] to learn more.
 This method returns the cache object that is used for accessing the cache methods described in the documentation.
@@ -96,7 +96,7 @@ This method returns the cache object that is used for accessing the cache method
 
 #### Example
     // Create a cache for reading a large collection of data
-	var flightCollectionCache = DataJS.createDataCache({
+	var flightCollectionCache = DataJS.datajs.createDataCache({
 		name: 'flightCollectionCache',
 		source: flightCollectionURL,
 		pageSize: pageSize,
@@ -120,6 +120,32 @@ This method returns the cache object that is used for accessing the cache method
         }
     );
 
+### object datajs.createStore(name, mechanism)
+The datajs store API provides a common abstraction over a few mechanisms that can be uesd to store data. Please see the
+[DataJS documentation for the datajs store API][datajsdatastore] to learn more.
+This method returns the store object that is used for accessing the store methods described in the documentation.
+
+* name[string]: Name for the data store
+* mechanism[string]: Mechanism to use to create the store (options). Valid values include:
+    * "best"
+    * "memory"
+    * "dom"
+    * "indexeddb"
+
+#### Example
+    // Create a store for saving key/value pairs
+    var flightStore = DataJS.datajs.createStore("flightData");
+    flightStore.add(
+        key,
+        value,
+        function (key, value) {
+            Ti.API.info(JSON.stringify(data));
+        },
+        function (err) {
+            Ti.API.error('Error occurred ' + JSON.stringify(err));
+        }
+    );
+
 ## Usage
 See Example.
 
@@ -140,7 +166,8 @@ Please direct all questions, feedback, and concerns to [info@appcelerator.com](m
 Copyright(c) 2011-2012 by Appcelerator, Inc. All Rights Reserved. Please see the LICENSE file included in the distribution for further details.
 
 [datajs]: http://datajs.codeplex.com/
-[datajsread]: http://datajs.codeplex.com/wikipage?title=datajs%20OData%20API&referringTitle=Documentation#OData.read
-[datajsrequest]: http://datajs.codeplex.com/wikipage?title=datajs%20OData%20API&referringTitle=Documentation#OData.request
-[datajsdatacache]: http://datajs.codeplex.com/wikipage?title=datajs%20cache%20API&referringTitle=Using%20Caches
+[datajsread]: http://datajs.codeplex.com/wikipage?title=datajs%20OData%20API#OData.read
+[datajsrequest]: http://datajs.codeplex.com/wikipage?title=datajs%20OData%20API#OData.request
+[datajsdatacache]: http://datajs.codeplex.com/wikipage?title=datajs%20cache%20API
+[datajsdatastore]: http://datajs.codeplex.com/wikipage?title=datajs%20store%20API
 [sapnetweavergateway]: http://scn.sap.com/community/netweaver-gateway

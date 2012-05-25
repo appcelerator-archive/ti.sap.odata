@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import os, sys
-import shutil, glob, platform, subprocess
+import shutil, glob, platform, subprocess, string
 
 def fork(directory, cmd, quiet=False):
     proc = subprocess.Popen(cmd, shell=True, cwd=directory, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
@@ -49,17 +49,22 @@ def main(args):
         die("Invalid command")
 
     if cmd == 'build':
+        packages = []
         if os.path.exists('iphone'):
             create_module('iphone', './build.py')
+            packages.append('iphone')
 
         if os.path.exists('mobileweb'):
             create_module('mobileweb', './build.py')
+            packages.append('mobileweb')
 
         if os.path.exists('android'):
             create_module('android', 'ant')
+            packages.append('android')
 
-        if os.path.exists('commonjs'):
-            create_module('commonjs', './build.py')
+        packages_cmd = './package.py --platform=' + string.join(packages, ',')
+        fork('.', packages_cmd, False)
+
     elif cmd == 'clean':
         if os.path.exists('iphone'):
             clean_build_module('iphone')

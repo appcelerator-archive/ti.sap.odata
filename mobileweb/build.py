@@ -429,7 +429,11 @@ class Compiler(object):
 		}, indent=4, sort_keys=True))
 		
 		self.zip_dir(zf, 'build', '%s/src' % install_path)
-		self.zip_dir(zf, '../example', '%s/example' % install_path)
+
+		example_path = os.path.join(self.module_path, 'example')
+		if not os.path.exists(example_path):
+		    example_path = os.path.join(self.module_path, '../example')
+		self.zip_dir(zf, example_path, '%s/example' % install_path)
 		
 		docs = self.generate_doc()
 		if docs != None:
