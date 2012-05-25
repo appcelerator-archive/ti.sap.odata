@@ -109,8 +109,8 @@ function MasterView(win) {
 	function handleScroll (evt) {
 		// NOTE: Don't use evt.totalItemCount as these event can be queued up and the item count
 		// may not have been updated yet. So use our internal count.
-	    if ((Utils.isAndroid && (lastFlight < evt.firstVisibleItem + evt.visibleItemCount + 3)) ||
-	    	(!Utils.isAndroid && (evt.contentOffset.y + evt.size.height + 100 > evt.contentSize.height))) {
+	    if ((Platform.isAndroid && (lastFlight < evt.firstVisibleItem + evt.visibleItemCount + 3)) ||
+	    	(!Platform.isAndroid && (evt.contentOffset.y + evt.size.height + 100 > evt.contentSize.height))) {
 			if (modeButton.enabled) {
 				populate();
 			}
