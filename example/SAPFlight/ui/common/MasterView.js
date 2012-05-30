@@ -49,7 +49,11 @@ function MasterView(win) {
 	modeButton.addEventListener('click', toggleMode);
 
     // Trigger a 'refresh' when the window initially opens
-	win.addEventListener('open', refresh);
+	win.addEventListener('open', startup);
+	function startup() {
+		refresh();
+		win.removeEventListener('open', startup);
+	}
 
     // Define the template for each row in the table view
 	function TableViewCell (flight) {

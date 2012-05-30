@@ -8,6 +8,10 @@ function MasterView(win) {
 	var DataLayer = require('data/datalayer');
 	var Platform = require('utility/platform');
 
+    // Keep track of the index of the last record that has been retrieved so that 'infinite-scrolling'
+    // can detect when it needs to request the next page.
+	var lastRow = 0;
+
 	var self = Ti.UI.createView({
 		backgroundColor:'white'
 	});
@@ -36,11 +40,20 @@ function MasterView(win) {
 			genre: e.rowData.genre
 		});
 	});
-		
+
+    // Enable infinite-scroll on table
+    // Use the 'scrollEnd' event here due to TIMOB-8554. Can switch to 'scroll' event once that
+    // issue is resolved.
+    table.addEventListener('scrollEnd', handleScroll);
+
 	refreshButton.addEventListener('click', refresh);
 
     // Trigger a 'refresh' when the window initially opens
-	win.addEventListener('open', refresh);
+	win.addEventListener('open', startup);
+	function startup() {
+		refresh();
+		win.removeEventListener('open', startup);
+	}
 
     // Define the template for each row in the table view
 	function TableViewCell (genre) {
@@ -63,9 +76,19 @@ function MasterView(win) {
 	
 	function refresh () {
 		startLoading ();
+        lastRow = 0;
 		populate();
 	}
-	
+
+    function handleScroll (evt) {
+   		// NOTE: Don't use evt.totalItemCount as these event can be queued up and the item count
+   		// may not have been updated yet. So use our internal count.
+   	    if ((Platform.isAndroid && (lastRow < evt.firstVisibleItem + evt.visibleItemCount + 3)) ||
+   	    	(!Platform.isAndroid && (evt.contentOffset.y + evt.size.height + 100 > evt.contentSize.height))) {
+   			populate();
+   		}
+   	}
+
     function startLoading () {
 		table.setData([Ti.UI.createTableViewRow({title:"Loading..."})]);
     }
@@ -75,18 +98,25 @@ function MasterView(win) {
     }	
     
 	function populate () {
-		function handleSuccess (genreCollection) {
+		function handleSuccess (rowCollection) {
 			// Create each of the cells from the collection of genres
 			var tableCells = [];
-			var numGenres = genreCollection.length;
-			for (var i = 0; i < numGenres; i++) {
-				tableCells.push(TableViewCell(genreCollection[i]));
+			var numRows = rowCollection.length;
+			for (var i = 0; i < numRows; i++) {
+				tableCells.push(TableViewCell(rowCollection[i]));
 			}
 			
 			// Now update the table with the set of new rows
 			stopLoading();
-			table.setData(tableCells);
-			
+            if (lastRow == 0) {
+			    table.setData(tableCells);
+            } else {
+                table.appendRow(tableCells);
+            }
+
+			// Keep track of the last row index for the next paging operation
+			lastRow += numRows;
+
 			refreshButton.enabled = true;
 		}
 		
@@ -97,11 +127,11 @@ function MasterView(win) {
 			refreshButton.enabled = true;
 		}		
 		
-		// Disable the mode selection button so that it can't be changed while we are retrieving data
+		// Disable the refresh button so that it can't be changed while we are retrieving data
 		refreshButton.enabled = false;
 		
 		// Request the entire set of records
-		DataLayer.getGenres(handleSuccess, handleError);
+		DataLayer.getGenresCollectionRows(lastRow, handleSuccess, handleError);
 	};
 	
 	return self;

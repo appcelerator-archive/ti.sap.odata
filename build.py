@@ -29,6 +29,9 @@ def clean_build_module(platform):
     print "Cleaned %s module project" % platform
 
 def clean_ant_module(platform):
+    build_path = os.path.join(os.getcwd(), platform, 'build')
+    if os.path.exists(build_path):
+        shutil.rmtree(build_path)
     ant_path = os.path.join(os.getcwd(), platform)
     retcode = fork(ant_path, 'ant clean', False)
     retcode = fork(ant_path, 'ant cleancopy', False)
@@ -77,6 +80,10 @@ def main(args):
 
         if os.path.exists('commonjs'):
             clean_build_module('commonjs')
+
+        zip_file = os.path.join(os.getcwd(), '*.zip')
+        for fl in glob.glob(zip_file):
+            os.remove(fl)
 
 if __name__ == "__main__":
     main(sys.argv)
