@@ -147,7 +147,20 @@ This method returns the store object that is used for accessing the store method
     );
 
 ## Usage
-See Example.
+See the example applications in the 'example' folder of the module.
+
+The first example application, SAPFlight, demonstrates how to retrieve
+data from the SAP Flight Collection data feed. The code for accessing the data feed is located in
+the 'example/SAPFlight/data/datalayer.js' file. This example uses the 'atom+xml' data format.
+Note that this example application does not work on MobileWeb due to issues with CORS.
+
+The second example, Netflix, demonstrates how to retrieve data from the
+NetFlix data feed. The code for accessing the data feed is located in the
+'example/NetFlix/data/datalayer.js' file. This example uses the 'json' data format via JSONP to retrieve data.
+Note that this example application does work on MobileWeb.
+
+Both example applications make use of the data cache capabilities of the module to retrieve data one page at a time. This
+technique is used in implementing the 'infinite-scroll', or 'pull-to-load' feature of the application.
 
 ## Author
 
