@@ -2,12 +2,14 @@
 
 ## Desription
 
-Provides access to OData feeds by utilizing Microsoft's DataJS JavaScript library through Titanium.
+Provides access to OData feeds by utilizing Microsoft's DataJS JavaScript library through Titanium. OData is an 
+open web protocol for querying and updating data, currently being used by Microsoft, SAP, Netflix, and others.
+
 DataJS makes it easy to interact with OData through XML or JSON.
 
-## Note:
+## Dependencies
 
-This module requires that you are using version 2.0.2 or newer of the Titanium SDK.
+This module requires Release 2.0.2 or newer of the Titanium SDK.
 
 ## OData Resources
 
@@ -21,7 +23,7 @@ started with using this module in your application.
 
 ## Accessing the Module
 
-To access this module from JavaScript, you would do the following:
+Use `require` to access this module from JavaScript:
 
 	var DataJS = require("ti.datajs");
 
@@ -32,15 +34,15 @@ The DataJS variable is a reference to the Module object.
 ### void OData.read(urlOrRequest, success, error, handler, httpClient, metadata)
 Reads data from the specified OData URL. Please see the [DataJS documentation for OData.read][datajsread] to learn more.
 
-* urlOrRequest[string or object]: A string containing the URL to which the request is sent, or an object that represents the HTTP request to be sent
+* urlOrRequest[string or object]: A string containing the URL to which the request is sent, or an object that represents the HTTP request to be sent.
 * success[function]: A callback function that is executed if the request succeeds (optional). Parameters passed to the callback function are:
-    * data[object]: Processed data
-    * response[object]: Server response
+    * data[object]: Processed data.
+    * response[object]: Server response.
 * error[function]: A callback function that is executed if the request fails (optional). Parameters passed to the callback function are:
-    * err[object]: Error object
-* handler[function]: Handler for data serialization (optional)
-* httpClient[object]: Object to use as an HTTP stack (optional)
-* metadata[object]: Object describing the structural metadata to use (optional)
+    * err[object]: Error object.
+* handler[function]: Handler for data serialization (optional).
+* httpClient[object]: Object to use as an HTTP stack (optional).
+* metadata[object]: Object describing the structural metadata to use (optional).
 
 #### Example
     DataJS.OData.read({
@@ -59,15 +61,15 @@ Reads data from the specified OData URL. Please see the [DataJS documentation fo
 ### void OData.request(request, success, error, handler, httpClient, metadata)
 Sends a request containing OData payload to the server. Please see the [DataJS documentation for OData.request][datajsrequest] to learn more.
 
-* request[object]: An object that represents the HTTP request to be sent
+* request[object]: An object that represents the HTTP request to be sent.
 * success[function]: A callback function that is executed if the request succeeds (optional). Parameters passed to the callback function are:
-    * data[object]: Processed data
-    * response[object]: Server response
+    * data[object]: Processed data.
+    * response[object]: Server response.
 * error[function]: A callback function that is executed if the request fails (optional). Parameters passed to the callback function are:
-    * err[object]: Error object
-* handler[function]: Handler for data serialization (optional)
-* httpClient[object]: Object to use as an HTTP stack (optional)
-* metadata[object]: Object describing the structural metadata to use (optional)
+    * err[object]: Error object.
+* handler[function]: Handler for data serialization (optional).
+* httpClient[object]: Object to use as an HTTP stack (optional).
+* metadata[object]: Object describing the structural metadata to use (optional).
 
 #### Example
     DataJS.OData.request({
@@ -147,17 +149,18 @@ This method returns the store object that is used for accessing the store method
     );
 
 ## Usage
-See the example applications in the 'example' folder of the module.
+See the example applications in the `example` folder of the module.
 
-The first example application, SAPFlight, demonstrates how to retrieve
-data from the SAP Flight Collection data feed. The code for accessing the data feed is located in
-the 'example/SAPFlight/data/datalayer.js' file. This example uses the 'atom+xml' data format.
-Note that this example application does not work on MobileWeb due to issues with CORS.
+The first example application, SAPFlight, demonstrates how to retrieve data from a publicly available 
+SAP OData feed that provides flight information.  The code for accessing the data feed is located in
+the `example/SAPFlight/data/datalayer.js` file. This example uses the `atom+xml` data format.
+Note that this example application does not work on Mobile Web due to issues with cross-domain resource access.
 
-The second example, Netflix, demonstrates how to retrieve data from the
-NetFlix data feed. The code for accessing the data feed is located in the
-'example/NetFlix/data/datalayer.js' file. This example uses the 'json' data format via JSONP to retrieve data.
-Note that this example application does work on MobileWeb.
+The second example, Netflix, demonstrates how to retrieve data from 
+a publicly available Netflix OData feed that provides movie information.
+The code for accessing the data feed is located in the
+`example/NetFlix/data/datalayer.js` file. This example uses the JSON data format via JSONP to retrieve data.
+Note that this example application _does_ work on Mobile Web.
 
 Both example applications make use of the data cache capabilities of the module to retrieve data one page at a time. This
 technique is used in implementing the 'infinite-scroll', or 'pull-to-load' feature of the application.
