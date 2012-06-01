@@ -28,9 +28,20 @@ if (Ti.Platform.osname == 'mobileweb') {
         },
         XMLSerializer: function () {
             this.serializeToString = function (domNode) {
-                var s = '<?xml version="1.0" encoding="utf-8"?>' + Ti.XML.serializeToString(domNode);
+                var s = Ti.XML.serializeToString(domNode);
                 if (Ti.Platform.name != 'android') {
+                    // The iPhone platform has an issue with erroneously generating 'xmlns:xmlns' namespace entry.
+                    // TIMOB-9084 will eventually resolve this issue, but until then we need to remove it
                     s = s.split('xmlns:xmlns=\"http://www.w3.org/2000/xmlns/\"').join('');
+                }
+                // The Android serializeToString method includes the xml version element.
+                // The iOS serializeToString method does not include the xml version element.
+                // This is a parity issue and we don't know how it will be resolved. So, in order to ensure
+                // that this continues to work regardless of which platform changes, just ensure that the
+                // serialized string has the xml version element at the start.
+                var reXmlVersion = /^<\?xml version="1\.0" encoding="UTF-8"\?>/i;
+                if (!reXmlVersion.test(s)) {
+                    s = '<?xml version="1.0" encoding="UTF-8"?>' + s;
                 }
                 return s;
             };
@@ -101,9 +112,7 @@ if (Ti.Platform.osname == 'mobileweb') {
                     + Ti.Utils.base64encode(request.user + ':' + request.password));
             }
             if (request.method in { PUT: 1, POST: 1, DELETE: 1 }) {
-                xhr.setRequestHeader('x-requested-with', 'XMLHttpRequest');
-                xhr.setRequestHeader('X-requested-with', 'XMLHttpRequest');
-                xhr.setRequestHeader('X-Request-With', 'X');
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             }
             xhr.send(request.body || {});
             return xhr;
@@ -118,7 +127,7 @@ if (Ti.Platform.osname == 'mobileweb') {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Titanium Change 1 of 10: Change license to block comment with @license attribute to preserve statement.
+// Titanium Change: Change license to block comment with @license attribute to preserve statement.
 // This is version 1.0.3 of DataJS.
 
 /**
@@ -140,7 +149,7 @@ if (Ti.Platform.osname == 'mobileweb') {
 // datajs.js
 
 (function (window, undefined) {
-    // Titanium Change 2 of 10: Change window.datajs and window.OData to exports.datajs and exports.OData to expose them in the module.
+    // Titanium Change: Change window.datajs and window.OData to exports.datajs and exports.OData to expose them in the module.
     if (!exports.datajs) {
         exports.datajs = {};
     }
@@ -1043,7 +1052,7 @@ if (Ti.Platform.osname == 'mobileweb') {
         /// <summary>Checks whether the specified URL is local to the current context.</summary>
         /// <param name="url" type="String">URL to check.</param>
         /// <returns type="Boolean">true if the url is a local URL; false otherwise.</returns>
-        // Titanium Change 3 of 10: Titanium Mobile can hit any URL like it is local.
+        // Titanium Change: Titanium Mobile can hit any URL like it is local.
         if (Ti && Ti.Platform.osname != 'mobileweb') {
             return true;
         }
@@ -1772,7 +1781,7 @@ if (Ti.Platform.osname == 'mobileweb') {
         var doc = domNode.ownerDocument;
         var attribute;
         if (doc.createAttributeNS) {
-            // Titanium Change 4 of 10: Use createAttribute when namespace is null.
+            // Titanium Change: Use createAttribute when namespace is null.
             if (xmlnsNS)
                 attribute = doc.createAttributeNS(xmlnsNS, name);
             else
@@ -1922,7 +1931,7 @@ if (Ti.Platform.osname == 'mobileweb') {
             return node.localName;
         }
 
-        // Titanium Change 5 of 10: Use 'name' property if 'baseName' is not implemented.
+        // Titanium Change: Use 'name' property if 'baseName' is not implemented.
         if (node.baseName) {
             return node.baseName;
         }
@@ -1961,7 +1970,7 @@ if (Ti.Platform.osname == 'mobileweb') {
         var attribute;
         localName = (nsPrefix) ? (nsPrefix + ":" + localName) : localName;
         if (doc.createAttributeNS) {
-            // Titanium Change 6 of 10: Use createAttribute when namespace is null.
+            // Titanium Change: Use createAttribute when namespace is null.
             if (nsURI)
                 attribute = doc.createAttributeNS(nsURI, localName);
             else
@@ -2033,7 +2042,7 @@ if (Ti.Platform.osname == 'mobileweb') {
 
         var attribute;
         if (dom.createAttributeNS) {
-            // Titanium Change 7 of 10: Use createAttribute when namespace is null.
+            // Titanium Change: Use createAttribute when namespace is null.
             if (nsURI)
                 attribute = dom.createAttributeNS(nsURI, name);
             else
@@ -2129,7 +2138,7 @@ if (Ti.Platform.osname == 'mobileweb') {
         /// <param name="nsURI" type="String">Namespace of the attribute to get.</param>
         /// <returns type="String">Value of the attribute if found; null otherwise.</returns>
 
-        // Titanium Change 8 of 10: Use getAttribute when namespace is null.
+        // Titanium Change: Use getAttribute when namespace is null.
         if (domNode.getAttributeNS && nsURI) {
             return domNode.getAttributeNS(nsURI, localName);
         }
@@ -3565,7 +3574,8 @@ if (Ti.Platform.osname == 'mobileweb') {
 
         // Add commonly used namespaces.
         // ATOM is implied by the just-created element.
-        // xmlAddNamespaceAttribute(result.domNode, "xmlns", atomXmlNs);
+        // Titanium Change: Need to use xmlns:atom for SAP data feed to work (can't use default namespace)
+        xmlAddNamespaceAttribute(result.domNode, "xmlns:atom", atomXmlNs);
         xmlAddNamespaceAttribute(result.domNode, "xmlns:d", odataXmlNs);
         xmlAddNamespaceAttribute(result.domNode, "xmlns:m", odataMetaXmlNs);
 
@@ -3579,7 +3589,8 @@ if (Ti.Platform.osname == 'mobileweb') {
         /// <param name="context">Context used for serialization.</param>
         /// <returns>The feed element of the DOM tree built.</returns>
 
-        var feed = writeAtomRoot(parent, "feed");
+        // Titanium Change: Need to use xmlns:atom for SAP data feed to work (can't use default namespace)
+        var feed = writeAtomRoot(parent, "atom:feed");
         var entries = (isArray(data)) ? data : data.results;
         if (entries) {
             var i, len;
@@ -3598,16 +3609,20 @@ if (Ti.Platform.osname == 'mobileweb') {
         /// <param name="context">Context used for serialization.</param>
         /// <returns>The new entry.</returns>
 
-        var entry = writeAtomRoot(parent, "entry");
+        // Titanium Change: Need to use xmlns:atom for SAP data feed to work (can't use default namespace)
+        var entry = writeAtomRoot(parent, "atom:entry");
 
         // Set up a default empty author name as required by ATOM.
-        var author = xmlNewElement(entry, "author", atomXmlNs);
-        xmlNewElement(author, "name", atomXmlNs);
+        // Titanium Change: Need to use xmlns:atom for SAP data feed to work (can't use default namespace)
+        var author = xmlNewElement(entry, "atom:author", atomXmlNs);
+        xmlNewElement(author, "atom:name", atomXmlNs);
 
         // Set up a default empty title as required by ATOM.
-        xmlNewElement(entry, "title", atomXmlNs);
+        // Titanium Change: Need to use xmlns:atom for SAP data feed to work (can't use default namespace)
+        xmlNewElement(entry, "atom:title", atomXmlNs);
 
-        var content = xmlNewElement(entry, "content", atomXmlNs);
+        // Titanium Change: Need to use xmlns:atom for SAP data feed to work (can't use default namespace)
+        var content = xmlNewElement(entry, "atom:content", atomXmlNs);
         xmlNewAttribute(content, "type", null, "application/xml");
 
         var properties = xmlNewElement(content, propertiesTag, odataMetaXmlNs);
@@ -3680,12 +3695,14 @@ if (Ti.Platform.osname == 'mobileweb') {
 
             // Write the ID if present.
             if (metadata.uri) {
-                xmlNewElement(entry, "id", atomXmlNs, metadata.uri);
+                // Titanium Change: Need to use xmlns:atom for SAP data feed to work (can't use default namespace)
+                xmlNewElement(entry, "atom:id", atomXmlNs, metadata.uri);
             }
 
             // Write the type name if present.
             if (metadata.type) {
-                var category = xmlNewElement(entry, "category", atomXmlNs);
+                // Titanium Change: Need to use xmlns:atom for SAP data feed to work (can't use default namespace)
+                var category = xmlNewElement(entry, "atom:category", atomXmlNs);
                 xmlNewAttribute(category, "term", null, metadata.type);
                 xmlNewAttribute(category, "scheme", null, odataScheme);
             }
@@ -3699,7 +3716,8 @@ if (Ti.Platform.osname == 'mobileweb') {
         /// <param name="rel" type="String">Value for rel attribute in link element</param>
         /// <returns>The new link element.</returns>
 
-        var link = xmlNewElement(entry, "link", atomXmlNs);
+        // Titanium Change: Need to use xmlns:atom for SAP data feed to work (can't use default namespace)
+        var link = xmlNewElement(entry, "atom:link", atomXmlNs);
         xmlNewAttribute(link, "rel", null, rel);
         xmlNewAttribute(link, "href", null, href);
         return link;
@@ -4359,7 +4377,7 @@ if (Ti.Platform.osname == 'mobileweb') {
             }
             return value;
         });
-        // Titanium Change 9 of 10: Only reduce JSON to property "d" when it is present.
+        // Titanium Change: Only reduce JSON to property "d" when it is present.
         if (json.d) {
             json = json.d;
         }
@@ -7387,7 +7405,7 @@ if (Ti.Platform.osname == 'mobileweb') {
     };
 
 
-// Titanium Change 10of 10: Change 'this' to 'apiSet' to specify the set of platform-specific apis.
+// Titanium Change: Change 'this' to 'apiSet' to specify the set of platform-specific apis.
 })(apiSet);
 
 // END microsoft.datajs.js
