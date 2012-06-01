@@ -7,9 +7,9 @@ open web protocol for querying and updating data, currently being used by Micros
 
 DataJS makes it easy to interact with OData through XML or JSON.
 
-## Note:
+## Dependencies
 
-This module requires that you are using version 2.0.2 or newer of the Titanium SDK.
+This module requires Release 2.0.2 or newer of the Titanium SDK.
 
 ## OData Resources
 
