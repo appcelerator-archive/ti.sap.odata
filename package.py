@@ -58,7 +58,7 @@ def package_modules(args):
         zin.close()
     zout.close()
 
-    tgtfilename = args['modname'] + "-common-" + args['version'] + ".zip";
+    tgtfilename = args['modname'] + "-titanium-" + args['version'] + ".zip";
     tgtfile = os.path.join(os.getcwd(), tgtfilename)
     if os.path.exists(tgtfile):
         os.remove(tgtfile)
