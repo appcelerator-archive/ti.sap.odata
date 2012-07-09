@@ -4,12 +4,12 @@
  * Appcelerator Titanium is Copyright (c) 2009-2010 by Appcelerator, Inc.
  * and licensed under the Apache Public License (version 2)
  */
-#import "TiDatajsModule.h"
+#import "TiSapOdataModule.h"
 #import "TiBase.h"
 #import "TiHost.h"
 #import "TiUtils.h"
 
-@implementation TiDatajsModule
+@implementation TiSapOdataModule
 
 #pragma mark Internal
 
@@ -22,7 +22,7 @@
 // this is generated for your module, please do not change it
 -(NSString*)moduleId
 {
-	return @"ti.datajs";
+	return @"ti.sap.odata";
 }
 
 #pragma mark Lifecycle

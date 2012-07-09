@@ -1,6 +1,6 @@
 /**
  * @preserve
- * Titanium DataJS Module
+ * Titanium SAP OData Module
  *
  * Appcelerator Titanium is Copyright (c) 2009-2012 by Appcelerator, Inc.
  * and licensed under the Apache Public License (version 2)

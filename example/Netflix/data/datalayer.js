@@ -1,13 +1,13 @@
 /*
  * This module implements a simple data layer for the application, utilizing the
- * dataJS module for oData access.
+ * Ti.SAP.OData module for OData access.
  */
 
 (function (datalayer) {
-    // The dataJS module provides a simplified interface for accessing oData via JavaScript.
-	var DataJS = require('ti.datajs');
+    // The Ti.SAP.OData module provides a simplified interface for accessing OData via JavaScript.
+	var SAPOData = require('ti.sap.odata');
 
-    // Select the format for the oData feed that is being used. In this case, we are going
+    // Select the format for the OData feed that is being used. In this case, we are going
     // to use the JSON format from the feed.
 	var dataType = 'application/json';
 
@@ -20,9 +20,9 @@
 
     // To support the paging mode, create a data cache that will perform all of the
     // background work for retrieving each page of data. This is an optional feature of
-    // the dataJS module and is not required for oData usage, but is very helpful for
+    // the Ti.SAP.OData module and is not required for OData usage, but is very helpful for
     // implementing 'infinite-scrolling' in the user-interface.
-	var genresCollectionCache = DataJS.datajs.createDataCache({
+	var genresCollectionCache = SAPOData.datajs.createDataCache({
 		name: 'genresCollectionCache',
 		source: baseURL,
 		pageSize: pageSize,
@@ -36,7 +36,7 @@
 	}
 
     // Public method for retrieving a page of data. This method makes use of the data cache
-    // mechanism of the dataJS module.
+    // mechanism of the Ti.SAP.OData module.
     //   row: The index of the first row to retrieve
     //   success: callback function to be notified when data has been retrieved
     //   error: callback function to be notified if an error occurs during retrieval
@@ -57,7 +57,7 @@
 
     // To support the paging mode, create a data cache that will perform all of the
     // background work for retrieving each page of data. This is an optional feature of
-    // the dataJS module and is not required for oData usage, but is very helpful for
+    // the Ti.SAP.OData module and is not required for OData usage, but is very helpful for
     // implementing 'infinite-scrolling' in the user-interface.
     var detailsCollectionCache = null;
 
@@ -65,7 +65,7 @@
         if (detailsCollectionCache != null) {
             detailsCollectionCache.clear();
         }
-        detailsCollectionCache = DataJS.datajs.createDataCache({
+        detailsCollectionCache = SAPOData.datajs.createDataCache({
 		    name: 'detailsCollectionCache',
             source: URL + "?$orderby=Name",
 		    pageSize: pageSize,
@@ -75,7 +75,7 @@
     }
 
     // Public method for retrieving a page of data. This method makes use of the data cache
-    // mechanism of the dataJS module.
+    // mechanism of the Ti.SAP.OData module.
     //   row: The index of the first row to retrieve
     //   success: callback function to be notified when data has been retrieved
     //   error: callback function to be notified if an error occurs during retrieval
@@ -95,11 +95,11 @@
 	}
 
     // Public method for retrieving the entire collection of genres. This method makes use of
-    // the standard oData request mechanism of the dataJS module.
+    // the standard OData request mechanism of the Ti.SAP.OData module.
     //   success: callback function to be notified when data has been retrieved
     //   error: callback function to be notified if an error occurs during retrieval
 	datalayer.getGenres = function (success, error) {
-	    DataJS.OData.read({
+		SAPOData.OData.read({
     	        requestUri: baseURL,
         	    headers: { Accept: dataType },
                 enableJsonpCallback: true
@@ -118,11 +118,11 @@
 	};
 
     // Public method for retrieving the details for a genre. This method makes use of
-    // the standard oData request mechanism of the dataJS module.
+    // the standard OData request mechanism of the Ti.SAP.OData module.
     //   success: callback function to be notified when data has been retrieved
     //   error: callback function to be notified if an error occurs during retrieval
 	datalayer.getDetails = function (URL, success, error) {
-	    DataJS.OData.read({
+		SAPOData.OData.read({
     	        requestUri: URL,
         	    headers: { Accept: dataType },
                 enableJsonpCallback: true
