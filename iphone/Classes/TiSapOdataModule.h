@@ -6,7 +6,7 @@
  */
 #import "TiModule.h"
 
-@interface TiDatajsModule : TiModule 
+@interface TiSapOdataModule : TiModule
 {
 }
 

@@ -3,15 +3,15 @@
 # during compilation, packaging, distribution, etc.
 #
 version: 1.0.0
-description: DataJS for Titanium
+description: SAP OData for Titanium
 author: Dawson Toth and Jeff English
 license: Appcelerator Commercial License
 copyright: Copyright (c) 2011-2012 by Appcelerator,  Inc.
 
 
 # these should not be edited
-name: datajs
-moduleid: ti.datajs
+name: sap.odata
+moduleid: ti.sap.odata
 guid: 1056b5d2-2bb5-4339-b930-297637aeec30
 platform: iphone
 minsdk: 2.0.2
