@@ -1,13 +1,13 @@
 /*
  * This module implements a simple data layer for the application, utilizing the
- * dataJS module for oData access.
+ * Ti.SAP.OData module for OData access.
  */
 
 (function (datalayer) {
-    // The dataJS module provides a simplified interface for accessing oData via JavaScript.
-	var DataJS = require('ti.datajs');
+    // The Ti.SAP.OData module provides a simplified interface for accessing OData via JavaScript.
+	var SAPOData = require('ti.sap.odata');
 
-    // Select the format for the oData feed that is being used. In this case, we are going
+    // Select the format for the OData feed that is being used. In this case, we are going
     // to use the XML atom format from the feed. If your data feed supports JSON then specify
     // the JSON format as it will usually be more performant than XML data feeds.
 	var useXMLNotJSON = true;
@@ -35,9 +35,9 @@
 
     // To support the paging mode, create a data cache that will perform all of the
     // background work for retrieving each page of data. This is an optional feature of
-    // the dataJS module and is not required for oData usage, but is very helpful for
+    // the Ti.SAP.OData module and is not required for OData usage, but is very helpful for
     // implementing 'infinite-scrolling' in the user-interface.
-	var flightCollectionCache = DataJS.datajs.createDataCache({
+	var flightCollectionCache = SAPOData.datajs.createDataCache({
 		name: 'flightCollectionCache',
 		source: flightCollectionURL,
 		pageSize: pageSize,
@@ -53,7 +53,7 @@
 	}
 
     // Public method for retrieving a page of data. This method makes use of the data cache
-    // mechanism of the dataJS module.
+    // mechanism of the Ti.SAP.OData module.
     //   row: The index of the first row to retrieve
     //   success: callback function to be notified when data has been retrieved
     //   error: callback function to be notified if an error occurs during retrieval
@@ -73,11 +73,11 @@
 	}
 	
     // Public method for retrieving the entire collection of data. This method makes use of
-    // the standard oData request mechanism of the dataJS module.
+    // the standard OData request mechanism of the Ti.SAP.OData module.
     //   success: callback function to be notified when data has been retrieved
     //   error: callback function to be notified if an error occurs during retrieval
 	datalayer.getFlightCollection = function (success, error) {
-	    DataJS.OData.read({
+		SAPOData.OData.read({
     	        requestUri: flightCollectionURL,
         	    headers: { Accept: dataType },
 				formatQueryString: queryString,
@@ -110,7 +110,7 @@
 
     // Public method for persisting a collection of flight data. This would be useful
     // if you need to support accessing the data when there is no network connectivity or
-    // you want to reload data from a previous session without having to make the oData
+    // you want to reload data from a previous session without having to make the OData
     // request.
     datalayer.saveFlightCollectionToFile = function (data) {
 		var file = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, flightCollectionFile);

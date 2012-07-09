@@ -6,15 +6,15 @@
  * Please see the LICENSE included with this distribution for details.
  *
  */
-package ti.datajs;
+package ti.sap.odata;
 
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 
-@Kroll.module(name="Datajs", id="ti.datajs")
-public class DatajsModule extends KrollModule
+@Kroll.module(name="SapOdata", id="ti.sap.odata")
+public class SapOdataModule extends KrollModule
 {
-	public DatajsModule()
+	public SapOdataModule()
 	{
 		super();
 	}

@@ -1,8 +1,8 @@
-# Ti.DataJS Module
+# Ti.SAP.OData Module
 
 ## Desription
 
-Provides access to OData feeds by utilizing Microsoft's DataJS JavaScript library through Titanium. OData is an 
+Provides access to OData feeds by utilizing Microsoft's DataJS JavaScript library through Titanium. OData is an
 open web protocol for querying and updating data, currently being used by Microsoft, SAP, Netflix, and others.
 
 DataJS makes it easy to interact with OData through XML or JSON.
@@ -25,9 +25,9 @@ started with using this module in your application.
 
 Use `require` to access this module from JavaScript:
 
-	var DataJS = require("ti.datajs");
+	var SAPOData = require("ti.sap.odata");
 
-The DataJS variable is a reference to the Module object.
+The SAP variable is a reference to the Module object.
 
 ## Methods
 
@@ -45,7 +45,7 @@ Reads data from the specified OData URL. Please see the [DataJS documentation fo
 * metadata[object]: Object describing the structural metadata to use (optional).
 
 #### Example
-    DataJS.OData.read({
+    SAPOData.OData.read({
             requestUri: baseURL,
             headers: {
                 Accept: 'application/atom+xml'
@@ -72,7 +72,7 @@ Sends a request containing OData payload to the server. Please see the [DataJS d
 * metadata[object]: Object describing the structural metadata to use (optional).
 
 #### Example
-    DataJS.OData.request({
+    SAPOData.OData.request({
             requestUri: uri,
             headers: {
                 'Content-Type': 'application/atom+xml',
@@ -98,7 +98,7 @@ This method returns the cache object that is used for accessing the cache method
 
 #### Example
     // Create a cache for reading a large collection of data
-	var flightCollectionCache = DataJS.datajs.createDataCache({
+	var flightCollectionCache = SAPOData.datajs.createDataCache({
 		name: 'flightCollectionCache',
 		source: flightCollectionURL,
 		pageSize: pageSize,
@@ -136,7 +136,7 @@ This method returns the store object that is used for accessing the store method
 
 #### Example
     // Create a store for saving key/value pairs
-    var flightStore = DataJS.datajs.createStore("flightData");
+    var flightStore = SAPOData.datajs.createStore("flightData");
     flightStore.add(
         key,
         value,
@@ -175,7 +175,7 @@ View the [change log](changelog.html) for this module.
 
 ## Feedback and Support
 
-Please direct all questions, feedback, and concerns to [info@appcelerator.com](mailto:info@appcelerator.com?subject=Ti.DataJS%20Module).
+Please direct all questions, feedback, and concerns to [info@appcelerator.com](mailto:info@appcelerator.com?subject=Ti.SAP.OData%20Module).
 
 ## License
 

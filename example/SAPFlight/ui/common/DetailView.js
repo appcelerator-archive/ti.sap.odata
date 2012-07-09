@@ -93,11 +93,11 @@ function DetailView() {
 	}
 
     // This is a placeholder method that is called when the user clicks on a 'clickUri'
-    // row in the table. You can extend the functionality by invoking an oData request
+    // row in the table. You can extend the functionality by invoking an OData request
     // in the DataLayer using the specified 'uri' property name and displaying additional UI.
 	function openPropertiesWindow (uri) {
         alert("Clicked on link")
-		Ti.API.info("Need to make oData request: " +  uri);
+		Ti.API.info("Need to make OData request: " +  uri);
 	}
 
     // Data binding method. This method updates the text of each of the displayed data elements
