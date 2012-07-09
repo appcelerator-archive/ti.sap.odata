@@ -1,4 +1,4 @@
-<project name="sap.odata" default="dist">
+<project name="sapodata" default="dist">
 	<description>
 		Ant build script for Titanium Android module sap.odata
 	</description>
