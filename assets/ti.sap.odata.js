@@ -88,7 +88,16 @@ if (Ti.Platform.osname == 'mobileweb') {
                     request = xhr = success = error = null;
                 }
             });
-            
+
+	        // MOD-845 and TIMOB-10337: Android has an issue with auto-encoding URLs, especially the type used
+	        // by the SAP Netweaver Gateway.
+            xhr.autoEncodeUrl = false;
+
+            // MOD-845: Android has a problem with uppercase schemes. The workaround is to make sure that the
+	        // scheme is lowercase.
+            url = url.replace(/^HTTP:/,"http:");
+            url = url.replace(/^HTTPS:/,"https:");
+
             // Optional format query string
             if (request.formatQueryString) {
                 var queryString = encodeURI(request.formatQueryString);
