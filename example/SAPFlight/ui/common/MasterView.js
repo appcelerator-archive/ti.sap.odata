@@ -140,7 +140,12 @@ function MasterView(win) {
 		function handleSuccess (flightCollection) {
 			// Create each of the cells from the collection of flights
 			var tableCells = [];
-			var numFlights = flightCollection.length;
+			var numFlights = 0;
+			if (flightCollection) {
+				numFlights = flightCollection.length;
+			} else {
+				alert("No data returned. Possibly not enough memory - use paging mode.");
+			}
 			for (var i = 0; i < numFlights; i++) {
 				tableCells.push(TableViewCell(flightCollection[i]));
 			}

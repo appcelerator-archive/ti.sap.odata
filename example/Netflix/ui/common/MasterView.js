@@ -101,7 +101,12 @@ function MasterView(win) {
 		function handleSuccess (rowCollection) {
 			// Create each of the cells from the collection of genres
 			var tableCells = [];
-			var numRows = rowCollection.length;
+			var numRows = 0;
+			if (rowCollection) {
+				numRows = rowCollection.length;
+			} else {
+				alert("No data returned. Possibly not enough memory - use paging mode.");
+			}
 			for (var i = 0; i < numRows; i++) {
 				tableCells.push(TableViewCell(rowCollection[i]));
 			}
