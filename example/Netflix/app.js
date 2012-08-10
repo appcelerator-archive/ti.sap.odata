@@ -25,7 +25,7 @@ if (Ti.version < 1.8 ) {
     if (Platform.isiPad) {
         Window = require('ui/tablet/ipad/ApplicationWindow');
     } else if (Platform.isTablet) {
-		Window = require('ui/tablet/ApplicationWindow');
+		Window = require('ui/tablet/android/ApplicationWindow');
 	} else if (Platform.isiPhone) {
 		Window = require('ui/handheld/ios/ApplicationWindow');
 	} else if (Platform.isMobileWeb) {
