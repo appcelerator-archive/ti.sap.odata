@@ -15,7 +15,7 @@ function ApplicationWindow() {
 		left:0,
 		width:240
 	});
-    var masterView = new MasterView();
+    var masterView = new MasterView(self);
     masterView.borderColor = '#000';
     masterView.borderWidth = 1;
 	masterContainer.add(masterView);
