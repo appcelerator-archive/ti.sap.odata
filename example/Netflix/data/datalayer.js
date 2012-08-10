@@ -106,7 +106,7 @@
        		},
         	function (data, response) {
         		if (typeof success === "function") {
-        			success(data.results);
+        			success(data && data.results);
         		}
        		},
         	function (err) {
@@ -129,7 +129,7 @@
        		},
         	function (data, response) {
         		if (typeof success === "function") {
-        			success(data.results);
+        			success(data && data.results);
         		}
        		},
         	function (err) {
