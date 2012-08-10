@@ -1895,7 +1895,8 @@ if (Ti.Platform.osname == 'mobileweb') {
         /// representing the node and its descendants; never null.
         /// </returns>
 
-        var result = domNode.text;
+	    //Titanium change: Use textContent rather than text
+        var result = domNode.textContent;
         if (result !== undefined) {
             return result;
         }
