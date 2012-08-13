@@ -7,10 +7,15 @@ function MasterView(win) {
 	var Utils = require('utility/utils');
 	var DataLayer = require('data/datalayer');
 	var Platform = require('utility/platform');
+	var populating = false;
+
+    // Initial state will be paging mode. Each request will be for a page of data from the genres
+    // data feed and 'infinite-scrolling' will request the pages as they are needed.
+    DataLayer.pageMode = true;
 
     // Keep track of the index of the last record that has been retrieved so that 'infinite-scrolling'
     // can detect when it needs to request the next page.
-	var lastRow = 0;
+	var lastGenre = 0;
 
 	var self = Ti.UI.createView({
 		backgroundColor:'white'
@@ -36,17 +41,20 @@ function MasterView(win) {
     // Set up the event listeners
 	// Notify the application when a genre is selected
 	table.addEventListener('click', function(e) {
-		self.fireEvent('app:genreSelected', {
-			genre: e.rowData.genre
-		});
+		DataLayer.getGenre(e.index,
+			function(data) {
+				self.fireEvent('app:genreSelected', {
+					genre: data
+				});
+			},
+			function(err) {
+				alert(err);
+			}
+		);
 	});
 
-    // Enable infinite-scroll on table
-    // Use the 'scrollEnd' event here due to TIMOB-8554. Can switch to 'scroll' event once that
-    // issue is resolved.
-    table.addEventListener('scrollEnd', handleScroll);
-
 	refreshButton.addEventListener('click', refresh);
+	enableInfiniteScroll(true);
 
     // Trigger a 'refresh' when the window initially opens
 	win.addEventListener('open', startup);
@@ -59,8 +67,7 @@ function MasterView(win) {
 	function TableViewCell (genre) {
 		var row = Ti.UI.createTableViewRow({
 			hasChild: true,
-			className: 'Genre',
-            genre: genre
+			className: 'Genre'
 		});
 		
 		var title = Ti.UI.createLabel({
@@ -76,26 +83,30 @@ function MasterView(win) {
 	
 	function refresh () {
 		startLoading ();
-        lastRow = 0;
+        lastGenre = 0;
 		populate();
 	}
 
     function handleScroll (evt) {
    		// NOTE: Don't use evt.totalItemCount as these event can be queued up and the item count
    		// may not have been updated yet. So use our internal count.
-   	    if ((Platform.isAndroid && (lastRow < evt.firstVisibleItem + evt.visibleItemCount + 3)) ||
+   	    if ((Platform.isAndroid && (lastGenre < evt.firstVisibleItem + evt.visibleItemCount + 3)) ||
    	    	(!Platform.isAndroid && (evt.contentOffset.y + evt.size.height + 100 > evt.contentSize.height))) {
-   			populate();
+			populate();
    		}
    	}
+
+	function enableInfiniteScroll (enabled) {
+		if (enabled) {
+			table.addEventListener('scroll', handleScroll);
+		} else {
+			table.removeEventListener('scroll', handleScroll);
+		}
+	}
 
     function startLoading () {
 		table.setData([Ti.UI.createTableViewRow({title:"Loading..."})]);
     }
-    
-    function stopLoading () {
-    	table.deleteRow(0);
-    }	
     
 	function populate () {
 		function handleSuccess (rowCollection) {
@@ -112,31 +123,37 @@ function MasterView(win) {
 			}
 			
 			// Now update the table with the set of new rows
-			stopLoading();
-            if (lastRow == 0) {
+            if (lastGenre == 0) {
 			    table.setData(tableCells);
             } else {
                 table.appendRow(tableCells);
             }
 
 			// Keep track of the last row index for the next paging operation
-			lastRow += numRows;
+			lastGenre += numRows;
 
 			refreshButton.enabled = true;
+			
+			populating = false;
 		}
 		
 		function handleError (error) {
-			stopLoading();
 			alert(error.message);
 
 			refreshButton.enabled = true;
+			
+			populating = false;
 		}		
 		
-		// Disable the refresh button so that it can't be changed while we are retrieving data
-		refreshButton.enabled = false;
-		
-		// Request the entire set of records
-		DataLayer.getGenresCollectionRows(lastRow, handleSuccess, handleError);
+		if (!populating) {
+			populating = true;
+			
+			// Disable the refresh button so that it can't be changed while we are retrieving data
+			refreshButton.enabled = false;
+			
+			// Request the entire set of records
+			DataLayer.getGenresCollectionRows(lastGenre, handleSuccess, handleError);
+		}
 	};
 	
 	return self;

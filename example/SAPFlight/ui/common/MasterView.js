@@ -7,11 +7,12 @@ function MasterView(win) {
 	var Utils = require('utility/utils');
 	var DataLayer = require('data/datalayer');
 	var Platform = require('utility/platform');
+	var populating = false;
 
     // Initial state will be paging mode. Each request will be for a page of data from the flight
     // data feed and 'infinite-scrolling' will request the pages as they are needed. When paging mode
     // is turned off the entire collection of flight data will be requested.
-	var pageMode = true;
+    DataLayer.pageMode = true;
 
     // Keep track of the index of the last flight record that has been retrieved so that 'infinite-scrolling'
     // can detect when it needs to request the next page.
@@ -41,9 +42,16 @@ function MasterView(win) {
     // Set up the event listeners
 	// Notify the application when a flight is selected
 	table.addEventListener('click', function(e) {
-		self.fireEvent('app:flightSelected', {
-			flight: e.rowData.flight
-		});
+		DataLayer.getFlight(e.index,
+			function(data) {
+		        self.fireEvent('app:flightSelected', {
+					flight: data
+				});
+			},
+			function(err) {
+				alert(err);
+			}
+		);
 	});
 		
 	modeButton.addEventListener('click', toggleMode);
@@ -59,8 +67,7 @@ function MasterView(win) {
 	function TableViewCell (flight) {
 		var row = Ti.UI.createTableViewRow({
 			hasChild: true,
-			className: 'FlightItem',
-			flight: flight
+			className: 'FlightItem'
 		});
 		
 		var title = Ti.UI.createLabel({
@@ -96,8 +103,8 @@ function MasterView(win) {
 	}
 	
 	function toggleMode () {
-		pageMode = !pageMode;
-		modeButton.title = pageMode ? 'Load All' : 'Paging';
+		DataLayer.pageMode = !DataLayer.pageMode;
+		modeButton.title = DataLayer.pageMode ? 'Load All' : 'Paging';
 		// Release the cache used for paging mode
 		DataLayer.clearFlightCollectionCache();
 		refresh ();
@@ -107,7 +114,7 @@ function MasterView(win) {
 		startLoading ();
 		lastFlight = 0;
 		populate();
-		enableInfiniteScroll(pageMode);
+		enableInfiniteScroll(DataLayer.pageMode);
 	}	
 	
 	function handleScroll (evt) {
@@ -115,11 +122,10 @@ function MasterView(win) {
 		// may not have been updated yet. So use our internal count.
 	    if ((Platform.isAndroid && (lastFlight < evt.firstVisibleItem + evt.visibleItemCount + 3)) ||
 	    	(!Platform.isAndroid && (evt.contentOffset.y + evt.size.height + 100 > evt.contentSize.height))) {
-			if (modeButton.enabled) {
-				populate();
-			}
+			populate();
 		}
 	}
+
 	function enableInfiniteScroll (enabled) {
 		if (enabled) {
 			table.addEventListener('scroll', handleScroll);
@@ -131,10 +137,6 @@ function MasterView(win) {
     function startLoading () {
 		table.setData([Ti.UI.createTableViewRow({title:"Loading..."})]);
     }
-    
-    function stopLoading () {
-    	table.deleteRow(0);
-    }	
     
 	function populate () {
 		function handleSuccess (flightCollection) {
@@ -151,7 +153,6 @@ function MasterView(win) {
 			}
 			
 			// Now update the table with the set of new rows
-			stopLoading();
 			if (lastFlight == 0) {
 				table.setData(tableCells);
 			} else {
@@ -162,24 +163,31 @@ function MasterView(win) {
 			lastFlight += numFlights;
 			
 			modeButton.enabled = true;
+
+			populating = false;
 		}
 		
 		function handleError (error) {
-			stopLoading();
 			alert(error.message);
 
 			modeButton.enabled = true;
+
+			populating = false;
 		}		
-		
-		// Disable the mode selection button so that it can't be changed while we are retrieving data
-		modeButton.enabled = false;
-		
-		// If we are in 'paging' mode then request the next page of records;
-		// Otherwise, request the entire set of records
-		if (pageMode) {
-			DataLayer.getFlightCollectionRows(lastFlight, handleSuccess, handleError);
-		} else {
-			DataLayer.getFlightCollection(handleSuccess, handleError);
+
+		if (!populating) {
+			populating = true;
+
+			// Disable the mode selection button so that it can't be changed while we are retrieving data
+			modeButton.enabled = false;
+
+			// If we are in 'paging' mode then request the next page of records;
+			// Otherwise, request the entire set of records
+			if (DataLayer.pageMode) {
+				DataLayer.getFlightCollectionRows(lastFlight, handleSuccess, handleError);
+			} else {
+				DataLayer.getFlightCollection(handleSuccess, handleError);
+			}
 		}
 	};
 	

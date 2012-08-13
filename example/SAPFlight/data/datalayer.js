@@ -22,9 +22,6 @@
 	var baseURL = 'http://gw.esworkplace.sap.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2';
 	var flightCollectionURL = baseURL + '/FlightCollection/';
 
-    // Name of file for persisting a retrieved flight collection
-    var flightCollectionFile = 'flightcollection.dat';
-
     // The sample flight data feeds require a username and password. For the purposes of
     // this example, the user and password are hard-coded -- this information would normally
     // be retrieved from the user via a login screen or some form of external credentials storage.
@@ -32,6 +29,9 @@
 		user: 'GW@ESW',
 		password: 'ESW4GW'
 	};
+
+	// Non-cached flight data
+	var flightCollection = null;
 
     // To support the paging mode, create a data cache that will perform all of the
     // background work for retrieving each page of data. This is an optional feature of
@@ -47,9 +47,43 @@
 		password: credentials.password
 	});
 
+	// Public property to manage page caching
+	datalayer.pageMode = true;
+
     // Public method for clearing the data cache
 	datalayer.clearFlightCollectionCache = function () {
 		flightCollectionCache.clear();
+		flightCollection = null;
+	}
+
+	// Public method for retrieving a single row by index. If using paging mode then
+	// request the row from the data cache. Otherwise, return the row directly from
+	// the local collection.
+    //   success: callback function to be notified when data has been retrieved
+    //   error: callback function to be notified if an error occurs during retrieval
+	datalayer.getFlight = function (row, success, error) {
+		if (this.pageMode) {
+			flightCollectionCache.readRange(row, 1).then(
+				function (data, response) {
+					if (typeof success === "function") {
+						success(data[0]);
+					}
+				},
+				function (err) {
+					if (typeof error === "function") {
+						error(err);
+					}
+				}
+			);
+		} else if ((row >= 0) && (row < flightCollection.length)) {
+			if (typeof success === "function") {
+				success(flightCollection[row]);
+			}
+		} else {
+			if (typeof error === "function") {
+				error("Requested row is out of range");
+			}
+		}
 	}
 
     // Public method for retrieving a page of data. This method makes use of the data cache
@@ -86,7 +120,8 @@
        		},
         	function (data, response) {
         		if (typeof success === "function") {
-        			success(data && data.results);
+        			flightCollection = data && data.results;
+        			success(flightCollection);
         		}
        		},
         	function (err) {
@@ -96,25 +131,5 @@
         	}
     	);
 	};	
-
-    // Public method for loading a cached collection of flight data.
-    datalayer.loadFlightCollectionFromFile = function () {
-		var file = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, flightCollectionFile);
-		if (file.exists()) {
-			var data = file.read();
-			return JSON.parse(data);
-		}
-		
-		return null;
-	}
-
-    // Public method for persisting a collection of flight data. This would be useful
-    // if you need to support accessing the data when there is no network connectivity or
-    // you want to reload data from a previous session without having to make the OData
-    // request.
-    datalayer.saveFlightCollectionToFile = function (data) {
-		var file = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, flightCollectionFile);
-		file.write(JSON.stringify(data, false));
-	}
 })(exports);
 
