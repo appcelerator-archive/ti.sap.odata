@@ -7,7 +7,8 @@ function DetailView() {
 	var Utils = require('utility/utils');
     var DataLayer = require('data/datalayer');
 	var Platform = require('utility/platform');
-	
+	var populating = false;
+
     // Keep track of the index of the last record that has been retrieved so that 'infinite-scrolling'
     // can detect when it needs to request the next page.
 	var lastRow = 0;
@@ -19,11 +20,12 @@ function DetailView() {
    	var table = Ti.UI.createTableView({});
 	self.add(table);
 
+	enableInfiniteScroll(true);
+
     // Define the template for each row in the table view
 	function TableViewCell (detail) {
 		var row = Ti.UI.createTableViewRow({
-			className: 'Detail',
-            detail: detail
+			className: 'Detail'
 		});
 
         var title = Ti.UI.createLabel({
@@ -58,11 +60,6 @@ function DetailView() {
 		return row;
 	}
 
-    // Enable infinite-scroll on table
-    // Use the 'scrollEnd' event here due to TIMOB-8554. Can switch to 'scroll' event once that
-    // issue is resolved.
-    table.addEventListener('scrollEnd', handleScroll);
-
     function refresh (URL) {
         DataLayer.initDetailsCollectionCache(URL);
    		startLoading ();
@@ -79,12 +76,16 @@ function DetailView() {
    		}
    	}
 
+	function enableInfiniteScroll (enabled) {
+		if (enabled) {
+			table.addEventListener('scroll', handleScroll);
+		} else {
+			table.removeEventListener('scroll', handleScroll);
+		}
+	}
+
     function startLoading () {
         table.setData([Ti.UI.createTableViewRow({title:"Loading..."})]);
-    }
-
-    function stopLoading () {
-        table.deleteRow(0);
     }
 
    	function populate (URL) {
@@ -102,7 +103,6 @@ function DetailView() {
    			}
 
 			// Now update the table with the set of new rows
-			stopLoading();
             if (lastRow == 0) {
 			    table.setData(tableCells);
             } else {
@@ -111,15 +111,21 @@ function DetailView() {
 
             // Keep track of the last row index for the next paging operation
 			lastRow += numRows;
+
+			populating = false;
    		}
 
    		function handleError (error) {
-   			stopLoading();
+   			populating = false;
    			alert(error.message);
    		}
 
+		if (!populating) {
+			populating = true;
+
    		// Request the entire set of records
    		DataLayer.getDetailsCollectionRows(lastRow, handleSuccess, handleError);
+   		}
    	};
 
 	self.addEventListener('app:genreSelected', function(e) {
