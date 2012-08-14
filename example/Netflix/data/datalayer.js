@@ -16,7 +16,7 @@
 
     // This module supports the ability to request all of the data at once or page-by-page.
     // When in paging mode, this value specifies the number of rows to be retrieved on each page request.
-	var pageSize = 20;
+	var pageSize = 25;
 
 	// Non-cached genres data
 	var genresCollection = null;
