@@ -20,6 +20,8 @@ module.exports = new function () {
         valueOf = testUtils.valueOf;
         SAPOData = require('ti.sap.odata');
 
+        //Retrieving valid information about future flight
+        // to test create item,  update item, get item, delete item APIs
         SAPOData.OData.read({
             requestUri : 'http://gw.esworkplace.sap.com/sap/opu/sdata/iwfnd/RMTSAMPLEFLIGHT/FlightCollection/',
             headers : {
@@ -31,12 +33,12 @@ module.exports = new function () {
             formatQueryString : "$format=xml",
             user : 'P1469806669',
             password : 'dashboard'
+
         }, function(data, response) {
 
-
+            //Find valid future flight
             for (var i=0; i<data.results.length; i++) {
                 var item = data.results[i];
-                delete item['__metadata'];
                 var today = Date();
                 var td = today.split(' ');
                 var fd = item.fldate;
@@ -46,7 +48,6 @@ module.exports = new function () {
                     carridx = item.carrid;
                     connidx = item.connid;
                     fldatex = item.fldate;
-
 
                     bookingData = {
                         AGENCYNUM : "00000325",
@@ -78,12 +79,10 @@ module.exports = new function () {
                     break;
                 };
             }
-
         }, function(err) {
+            //alert ('err from init');
             valueOf(testRun, false).shouldBeTrue();
         });
-
-
     };
 
 
@@ -197,6 +196,7 @@ module.exports = new function () {
 
     // Test Request POST****************************************************************************
     // createItem
+    // Create booking for future flight
 
 
     this.testRequestPOST_createItem = function (testRun) {
@@ -230,6 +230,7 @@ module.exports = new function () {
 
     // Test Request PUT****************************************************************************
     // updateItem
+    //Update booking information. Change 'PASSNAME' value
 
     this.testRequestPUT_updateItem = function (testRun) {
 
@@ -284,6 +285,7 @@ module.exports = new function () {
 
     // Test Read ****************************************************************************
     // getItem
+    // Read booking information
 
     this.testRead_getItem = function (testRun) {
 
@@ -336,8 +338,9 @@ module.exports = new function () {
 
     // Test Request DELETE ****************************************************************************
     // deleteItem
-    this.testRequest_deleteItem = function (testRun) {
+    // Delete booking
 
+    this.testRequest_deleteItem = function (testRun) {
 
     var uri = "http://gw.esworkplace.sap.com/sap/opu/sdata/iwfnd/RMTSAMPLEFLIGHT" + '/BookingCollection';
 
@@ -369,7 +372,6 @@ module.exports = new function () {
                 user : credentials.user,
                 password : credentials.password
             }, function (data, response) {
-                        //alert('z');
                         var uri = data.__metadata.edit;
                         SAPOData.OData.request({
                             headers : {
@@ -405,14 +407,16 @@ module.exports = new function () {
 
 
 
- //    Create a cache for reading a large collection of data
+    // Create a cache for reading a large collection of data
+    // Create cache and read data from cache
+
     this.testCreateDataCacheAndRead = function (testRun) {
 
         var uri = "http://gw.esworkplace.sap.com/sap/opu/sdata/iwfnd/RMTSAMPLEFLIGHT/FlightCollection/";
         var pageSize = 1;
         var row = 0;
 
-
+        // The data cache does not implement any callbacks
         var flightCollectionCache = SAPOData.datajs.createDataCache({
             name: 'flightCollectionCache',
             source: uri,
@@ -438,6 +442,7 @@ module.exports = new function () {
 
 
     // Create a store for saving key/value pairs
+
     this.testCreateStore = function (testRun) {
         var key = 'test101912';
         var value = 'test';
@@ -457,11 +462,6 @@ module.exports = new function () {
 
 
     };
-
-
-
-
-
 
 
 	this.testReadXML.platforms = { android:1, iphone:1, ipad:1, mobileweb:0 }
