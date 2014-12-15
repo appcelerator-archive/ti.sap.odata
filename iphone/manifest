@@ -2,7 +2,8 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 1.0.2
+version: 1.1.0
+architectures: armv7 i386 x86_64 arm64
 description: SAP OData for Titanium
 author: Dawson Toth and Jeff English
 license: Appcelerator Commercial License
@@ -14,4 +15,4 @@ name: sapodata
 moduleid: ti.sap.odata
 guid: 1056b5d2-2bb5-4339-b930-297637aeec30
 platform: iphone
-minsdk: 2.0.2
+minsdk: 3.4.1.GA

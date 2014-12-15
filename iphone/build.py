@@ -67,7 +67,7 @@ def generate_doc(config):
 	return documentation
 
 def compile_js(manifest,config):
-	js_file = os.path.join(cwd,'..','assets','ti.sap.odata.js')
+	js_file = os.path.join(cwd,'assets','ti.sap.odata.js')
 	print js_file
 	if not os.path.exists(js_file): return	
 
