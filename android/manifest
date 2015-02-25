@@ -4,6 +4,7 @@
 #
 version: 1.0.2
 apiversion: 2
+architectures: armeabi armeabi-v7a x86
 description: SAP OData for Titanium
 author: Dawson Toth and Jeff English
 license: Appcelerator Commercial License
