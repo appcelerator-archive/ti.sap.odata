@@ -1,0 +1,12 @@
+{
+  "name": "odata",
+  "repo": "Appcelerator/odata",
+  "description": "OData Request Library",
+  "version": "0.1.0",
+  "keywords": ["odata", "sap", "API"],
+  "dependencies": {
+    "visionmedia/superagent": "*"
+  },
+  "scripts": ["index.js", "lib/odata.js", "lib/model.js", "lib/tishim.js"],
+  "license": "PRIVATE"
+}

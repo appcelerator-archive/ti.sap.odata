@@ -1,0 +1,9 @@
+tmp
+/.settings/
+/.project
+*/build/
+.DS_Store
+build.log
+commonjs/drillbit/tests/*/tiapp.xml
+*.zip
+commonjs/module*

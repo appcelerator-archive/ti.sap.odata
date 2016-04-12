@@ -1,0 +1,19 @@
+{
+  "name": "odata",
+  "version": "0.0.1",
+  "description": "oData api",
+  "keywords": [],
+  "author": "Christian Sullivan <cs@euforic.co>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/euforic/odata.git"
+  },
+  "dependencies": {
+    "superagent": "~0.15.7"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "main": "index"
+}
